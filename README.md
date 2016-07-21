@@ -5,7 +5,15 @@ Experimental software for powering the measure the future 'motherships'. These a
 ![alpha](https://img.shields.io/badge/stability-alpha-orange.svg?style=flat "Alpha")&nbsp;
  ![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat "GPLv3 License")
 
- ## License
+## TODO
+* Write Development/Setup instructions.
+* ScoutHealth model: Prune/Delete. Reduce fidielity of data storage the older it becomes.
+* ScoutHealth model: Get last Health.
+* ScoutHealth model: Get Health history summary.
+* scouts controller
+* scout_api controller
+
+## License
 
 Copyright (C) 2016, Clinton Freeman
 

@@ -38,7 +38,3 @@ func (s *ScoutHealth) Insert(db *sql.DB) error {
 	_, err := db.Exec(query, s.ScoutId, s.CPU, s.Memory, s.TotalMemory, s.Storage, s.CreatedAt)
 	return err
 }
-
-// TODO: Prune/Delete. Reduce fidielity of data storage the older it becomes.
-// TODO: Get last Health.
-// TODO: Get Health history summary.
