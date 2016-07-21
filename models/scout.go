@@ -41,9 +41,7 @@ func GetScoutById(db *sql.DB, id int64) (*Scout, error) {
 
 func (s *Scout) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scouts (uuid, ip_address, authorised, name) VALUES ($1, $2, $3, $4) RETURNING id`
-	err := db.QueryRow(query, s.UUID, s.IpAddress, s.Authorised, s.Name).Scan(&s.Id)
-
-	return err
+	return db.QueryRow(query, s.UUID, s.IpAddress, s.Authorised, s.Name).Scan(&s.Id)
 }
 
 func (s *Scout) Update(db *sql.DB) error {

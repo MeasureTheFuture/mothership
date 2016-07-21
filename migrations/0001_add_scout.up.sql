@@ -7,4 +7,4 @@ CREATE TABLE scouts (
 	calibration_frame bytea,
 	name varchar(255) NOT NULL
 );
-ALTER SEQUENCE scout_id_seq OWNED BY scouts.id
+ALTER SEQUENCE scout_id_seq OWNED BY scouts.id;

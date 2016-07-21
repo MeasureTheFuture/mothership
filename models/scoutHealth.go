@@ -15,29 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package main
+package models
 
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-	"log"
-	"mothership/models"
 	"time"
 )
 
-func main() {
-	db, err := sql.Open("postgres", "user=cfreeman dbname=mothership")
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	s := models.Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo"}
-	err = s.Insert(db)
-	log.Print(err)
-	log.Print(s.Id)
-
-	sh := models.ScoutHealth{s.Id, 0.1, 0.2, 0.3, 0.4, time.Now()}
-	err = sh.Insert(db)
-	log.Print(err)
+type ScoutHealth struct {
+	ScoutId     int64
+	CPU         float32
+	Memory      float32
+	TotalMemory float32
+	Storage     float32
+	CreatedAt   time.Time
 }
+
+func (s *ScoutHealth) Insert(db *sql.DB) error {
+	const query = `INSERT INTO scout_healths (scout_id, cpu, memory, total_memory, storage,
+		created_at) VALUES ($1, $2, $3, $4, $5, $6)`
+	_, err := db.Exec(query, s.ScoutId, s.CPU, s.Memory, s.TotalMemory, s.Storage, s.CreatedAt)
+	return err
+}
+
+// TODO: Prune/Delete. Reduce fidielity of data storage the older it becomes.
+// TODO: Get last Health.
+// TODO: Get Health history summary.
