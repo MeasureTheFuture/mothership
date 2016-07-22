@@ -31,10 +31,19 @@ type Scout struct {
 }
 
 func GetScoutById(db *sql.DB, id int64) (*Scout, error) {
-	const query = `SELECT uuid, ip_address, authorised, name FROM scouts where id = $1`
+	const query = `SELECT uuid, ip_address, authorised, name FROM scouts WHERE id = $1`
 	var result Scout
-	err := db.QueryRow(query, id).Scan(&result.UUID, &result.IpAddress, &result.Name)
+	err := db.QueryRow(query, id).Scan(&result.UUID, &result.IpAddress, &result.Authorised, &result.Name)
 	result.Id = id
+
+	return &result, err
+}
+
+func GetScoutByUUID(db *sql.DB, uuid string) (*Scout, error) {
+	const query = `SELECT id, ip_address, authorised, name FROM scouts WHERE uuid = $1`
+	var result Scout
+	err := db.QueryRow(query, uuid).Scan(&result.Id, &result.IpAddress, &result.Authorised, &result.Name)
+	result.UUID = uuid
 
 	return &result, err
 }

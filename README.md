@@ -12,6 +12,7 @@ Experimental software for powering the measure the future 'motherships'. These a
 * ScoutHealth model: Get Health history summary.
 * scouts controller
 * scout_api controller
+* move database connection/webserver metadata to config file.
 
 ## License
 
