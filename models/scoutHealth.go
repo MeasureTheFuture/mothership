@@ -32,6 +32,17 @@ type ScoutHealth struct {
 	CreatedAt   time.Time
 }
 
+func GetScoutHealthById(db *sql.DB, scoutId int64, time time.Time) (*ScoutHealth, error) {
+	const query = `SELECT cpu, memory, total_memory, storage FROM scout_healths WHERE scout_id = $1 AND created_at = $2`
+
+	var result ScoutHealth
+	err := db.QueryRow(query, scoutId, time).Scan(&result.CPU, &result.Memory, &result.TotalMemory, &result.Storage)
+	result.ScoutId = scoutId
+	result.CreatedAt = time
+
+	return &result, err
+}
+
 func (s *ScoutHealth) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_healths (scout_id, cpu, memory, total_memory, storage,
 		created_at) VALUES ($1, $2, $3, $4, $5, $6)`

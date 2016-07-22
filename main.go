@@ -19,9 +19,13 @@ package main
 
 import (
 	"database/sql"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/engine/fasthttp"
 	_ "github.com/lib/pq"
 	"log"
+	"mothership/controllers"
 	"mothership/models"
+	"net/http"
 	"time"
 )
 
@@ -32,12 +36,14 @@ func main() {
 	}
 	defer db.Close()
 
-	s := models.Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo"}
-	err = s.Insert(db)
-	log.Print(err)
-	log.Print(s.Id)
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.POST("/scout_api/calibrated", controllers.ScoutCalibrated)
+	e.POST("/scout_api/interaction", controllers.ScoutInteraction)
+	e.POST("/scout_api/log", controllers.ScoutLog)
+	e.POST("/scout_api/heartbeat", controllers.ScoutHeartbeat)
 
-	sh := models.ScoutHealth{s.Id, 0.1, 0.2, 0.3, 0.4, time.Now()}
-	err = sh.Insert(db)
-	log.Print(err)
+	e.Run(fasthttp.New(":1323"))
 }

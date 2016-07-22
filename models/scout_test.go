@@ -20,19 +20,18 @@ package models
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	//	"log"
 	"database/sql"
 	_ "github.com/lib/pq"
 	"testing"
 )
 
-var db *sql.DB
-var err error
-
 func TestScout(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Scout Suite")
 }
+
+var db *sql.DB
+var err error
 
 var _ = Describe("Scout Model", func() {
 
@@ -78,6 +77,22 @@ var _ = Describe("Scout Model", func() {
 			s, err = GetScoutByUUID(db, "800fd548-2d2b-4185-885d-6323ccbe88a0")
 			Ω(err).Should(BeNil())
 			Ω(s).Should(Equal(&s2))
+		})
+	})
+
+	Context("Update", func() {
+		It("should be able to update a scout in the DB", func() {
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo"}
+			err := s.Insert(db)
+			Ω(err).Should(BeNil())
+
+			s.IpAddress = "192.168.0.2"
+			err = s.Update(db)
+			Ω(err).Should(BeNil())
+			s2, err := GetScoutById(db, s.Id)
+			Ω(err).Should(BeNil())
+
+			Ω(&s).Should(Equal(s2))
 		})
 	})
 })
