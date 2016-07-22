@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- package models
+package models
 
- import (
- 	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+import (
 	_ "github.com/lib/pq"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	"testing"
 	"time"
- )
+)
 
 func TestScoutHealth(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -55,9 +55,9 @@ var _ = Describe("Scout Health Model", func() {
 		})
 
 		It("should return an error when an invalid scout health is inserted into the DB.", func() {
-		 	sh := ScoutHealth{-1, 0.1, 0.2, 0.3, 0.4, time.Now()}
-		 	err := sh.Insert(db)
-		 	Ω(err).ShouldNot(BeNil())
+			sh := ScoutHealth{-1, 0.1, 0.2, 0.3, 0.4, time.Now()}
+			err := sh.Insert(db)
+			Ω(err).ShouldNot(BeNil())
 		})
 	})
 })
