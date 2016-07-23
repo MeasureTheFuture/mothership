@@ -18,6 +18,7 @@
 package controllers
 
 import (
+	"mothership/models"
 	"testing"
 )
 

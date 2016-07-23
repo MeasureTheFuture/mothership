@@ -22,11 +22,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	_ "github.com/lib/pq"
-	"log"
 	"mothership/controllers"
-	"mothership/models"
 	"net/http"
-	"time"
 )
 
 func main() {
@@ -40,10 +37,18 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
-	e.POST("/scout_api/calibrated", controllers.ScoutCalibrated)
-	e.POST("/scout_api/interaction", controllers.ScoutInteraction)
-	e.POST("/scout_api/log", controllers.ScoutLog)
-	e.POST("/scout_api/heartbeat", controllers.ScoutHeartbeat)
+	e.POST("/scout_api/calibrated", func(c echo.Context) error {
+		return controllers.ScoutCalibrated(db, c)
+	})
+	e.POST("/scout_api/interaction", func(c echo.Context) error {
+		return controllers.ScoutInteraction(db, c)
+	})
+	e.POST("/scout_api/log", func(c echo.Context) error {
+		return controllers.ScoutLog(db, c)
+	})
+	e.POST("/scout_api/heartbeat", func(c echo.Context) error {
+		return controllers.ScoutHeartbeat(db, c)
+	})
 
 	e.Run(fasthttp.New(":1323"))
 }
