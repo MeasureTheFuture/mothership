@@ -18,6 +18,7 @@
 package controllers
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"github.com/labstack/echo"
@@ -45,15 +46,36 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 }
 
 func ScoutCalibrated(db *sql.DB, c echo.Context) error {
-	return nil
+	return c.HTML(http.StatusNotFound, "")
 }
 
 func ScoutInteraction(db *sql.DB, c echo.Context) error {
-	return nil
+	return c.HTML(http.StatusNotFound, "")
 }
 
 func ScoutLog(db *sql.DB, c echo.Context) error {
-	return nil
+	s, err := isScoutAuthorised(db, c)
+	if err != nil {
+		return err
+	}
+	if s == nil {
+		return c.HTML(http.StatusNotFound, "")
+	}
+
+	data, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+
+	var buff bytes.Buffer
+	fileSize, err := buff.ReadFrom(data)
+	sl := ScoutLog{s.Id, buff.Bytes(), time.Now().UTC()}
+	err = sl.Insert(db)
+	if err != nil {
+		return err
+	}
+
+	return c.HTML(http.StatusOK, "Log received")
 }
 
 type Heartbeat struct {
