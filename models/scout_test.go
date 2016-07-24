@@ -77,6 +77,10 @@ var _ = Describe("Scout Model", func() {
 			s, err = GetScoutByUUID(db, "800fd548-2d2b-4185-885d-6323ccbe88a0")
 			Ω(err).Should(BeNil())
 			Ω(s).Should(Equal(&s2))
+
+			c, err := NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(c).Should(Equal(int64(1)))
 		})
 	})
 

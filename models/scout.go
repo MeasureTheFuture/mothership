@@ -48,6 +48,14 @@ func GetScoutByUUID(db *sql.DB, uuid string) (*Scout, error) {
 	return &result, err
 }
 
+func NumScouts(db *sql.DB) (int64, error) {
+	const query = `SELECT COUNT(*) FROM scouts`
+	var result int64
+	err := db.QueryRow(query).Scan(&result)
+
+	return result, err
+}
+
 func (s *Scout) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scouts (uuid, ip_address, authorised, name) VALUES ($1, $2, $3, $4) RETURNING id`
 	return db.QueryRow(query, s.UUID, s.IpAddress, s.Authorised, s.Name).Scan(&s.Id)

@@ -67,9 +67,16 @@ func ScoutLog(db *sql.DB, c echo.Context) error {
 		return err
 	}
 
+	src, err := data.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Store scout log.
 	var buff bytes.Buffer
-	fileSize, err := buff.ReadFrom(data)
-	sl := ScoutLog{s.Id, buff.Bytes(), time.Now().UTC()}
+	_, err = buff.ReadFrom(src)
+	sl := models.ScoutLog{s.Id, buff.Bytes(), time.Now().UTC()}
 	err = sl.Insert(db)
 	if err != nil {
 		return err
@@ -120,7 +127,7 @@ func ScoutHeartbeat(db *sql.DB, c echo.Context) error {
 		return err
 	}
 
-	// Scout exists. Update health statistics if it is authorised.
+	// Create new record for the scout health.
 	sh := models.ScoutHealth{s.Id, hb.Health.CPU, hb.Health.Memory, hb.Health.TotalMemory, hb.Health.Storage, time.Now().UTC()}
 	err = sh.Insert(db)
 	if err != nil {
