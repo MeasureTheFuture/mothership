@@ -18,12 +18,15 @@
 package controllers
 
 import (
+	"bytes"
 	"database/sql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	_ "github.com/lib/pq"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"io"
+	"mime/multipart"
 	"mothership/models"
 	"net/http"
 	"net/http/httptest"
@@ -47,6 +50,31 @@ var (
 	db  *sql.DB
 	err error
 )
+
+func buildPostRequest(fileName string, url string, uuid string, content string) (*http.Request, error) {
+	body := bytes.Buffer{}
+	w := multipart.NewWriter(&body)
+	defer w.Close()
+
+	part, err := w.CreateFormFile("file", fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = io.WriteString(part, content)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(echo.POST, url, &body)
+	req.Header.Add("Mothership-Authorization", uuid)
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
 
 func TestScoutHeartbeat(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -87,8 +115,55 @@ var _ = Describe("ScoutAPI controller", func() {
 			Ω(i).Should(Equal(int64(0)))
 		})
 
-		It("should create a new scout if valid authentication is supplied", func() {
-			//e := echo.New()
+		It("should create a new log if the scout is authorised", func() {
+			e := echo.New()
+			req, err := buildPostRequest("scout.log", "/scout_api/log", "59ef7180-f6b2-4129-99bf-970eb4312b4b", "log contents")
+			Ω(err).Should(BeNil())
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = ScoutLog(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+			i, err := models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutLogs(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+
+			err = ScoutLog(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+			i, err = models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutLogs(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+
+			s, err := models.GetScoutByUUID(db, "59ef7180-f6b2-4129-99bf-970eb4312b4b")
+			Ω(err).Should(BeNil())
+			s.Authorised = true
+			err = s.Update(db)
+			Ω(err).Should(BeNil())
+
+			rec = httptest.NewRecorder()
+			c = e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			err = ScoutLog(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusOK))
+			i, err = models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutLogs(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+
+			sl, err := models.GetLastScoutLog(db, s.Id)
+			Ω(err).Should(BeNil())
+			log := string(sl.Log[:])
+			Ω(log).Should(Equal("log contents"))
 		})
 	})
 })

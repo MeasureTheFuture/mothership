@@ -40,6 +40,24 @@ func GetScoutLogById(db *sql.DB, scoutId int64, time time.Time) (*ScoutLog, erro
 	return &result, err
 }
 
+func GetLastScoutLog(db *sql.DB, scoutId int64) (*ScoutLog, error) {
+	const query = `SELECT log, created_at FROM scout_logs WHERE scout_id = $1 ORDER by created_at DESC LIMIT 1`
+
+	var result ScoutLog
+	err := db.QueryRow(query, scoutId).Scan(&result.Log, &result.CreatedAt)
+	result.ScoutId = scoutId
+
+	return &result, err
+}
+
+func NumScoutLogs(db *sql.DB) (int64, error) {
+	const query = `SELECT COUNT(*) FROM scout_logs`
+	var result int64
+	err := db.QueryRow(query).Scan(&result)
+
+	return result, err
+}
+
 func (s *ScoutLog) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_logs (scout_id, log, created_at) VALUES ($1, $2, $3)`
 	_, err := db.Exec(query, s.ScoutId, s.Log, s.CreatedAt)

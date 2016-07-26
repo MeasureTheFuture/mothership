@@ -22,6 +22,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/labstack/echo"
+	"log"
 	"mothership/models"
 	"net/http"
 	"time"
@@ -42,6 +43,11 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 		return nil, err
 	}
 
+	if !s.Authorised {
+		return nil, nil
+	}
+
+	log.Printf("AUTHORISED")
 	return s, nil
 }
 
