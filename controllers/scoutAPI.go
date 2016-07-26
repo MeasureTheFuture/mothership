@@ -37,7 +37,7 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 	s, err := models.GetScoutByUUID(db, uuid)
 	if err != nil {
 		// Scout doesn't exist, create it and mark it as un-authorized.
-		ns := models.Scout{-1, uuid, "0.0.0.0", false, "Unknown location", "idle"}
+		ns := models.Scout{-1, uuid, "0.0.0.0", false, "Unknown location", []byte(""), "idle"}
 		err = ns.Insert(db)
 		return nil, err
 	}
@@ -50,7 +50,36 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 }
 
 func ScoutCalibrated(db *sql.DB, c echo.Context) error {
-	return c.HTML(http.StatusNotFound, "")
+	s, err := isScoutAuthorised(db, c)
+	if err != nil {
+		return err
+	}
+	if s == nil {
+		return c.HTML(http.StatusNotFound, "")
+	}
+
+	img, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+
+	src, err := img.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Store the calibration frame.
+	var buff bytes.Buffer
+	_, err = buff.ReadFrom(src)
+	s.CalibrationFrame = buff.Bytes()
+	s.State = models.CALIBRATED
+	err = s.Update(db)
+	if err != nil {
+		return err
+	}
+
+	return c.HTML(http.StatusOK, "Calibration received")
 }
 
 func ScoutInteraction(db *sql.DB, c echo.Context) error {

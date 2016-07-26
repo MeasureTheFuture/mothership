@@ -98,6 +98,25 @@ var _ = Describe("ScoutAPI controller", func() {
 		Ω(err).Should(BeNil())
 	})
 
+	Context("ScoutCalibration", func() {
+		It("should drop the request if no authentication is supplied", func() {
+			e := echo.New()
+			req, err := http.NewRequest(echo.POST, "/scout_api/calibrated", strings.NewReader(heartbeatJSON))
+			Ω(err).Should(BeNil())
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = ScoutCalibrated(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+
+			i, err := models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+		})
+
+	})
+
 	Context("ScoutHeartbeat", func() {
 		It("should drop the request if no authentication is supplied", func() {
 			e := echo.New()
