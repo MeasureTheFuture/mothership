@@ -98,6 +98,77 @@ var _ = Describe("ScoutAPI controller", func() {
 		Ω(err).Should(BeNil())
 	})
 
+	Context("ScoutHeartbeat", func() {
+		It("should drop the request if no authentication is supplied", func() {
+			e := echo.New()
+			req, err := http.NewRequest(echo.POST, "/scout_api/heartbeat", strings.NewReader(heartbeatJSON))
+			Ω(err).Should(BeNil())
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = ScoutHeartbeat(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+
+			i, err := models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+		})
+
+		It("should create a new heartbeat iff the scout is authorised", func() {
+			e := echo.New()
+			req, err := buildPostRequest("scout.log", "/scout_api/heartbeat", "59ef7180-f6b2-4129-99bf-970eb4312b4b", heartbeatJSON)
+			Ω(err).Should(BeNil())
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = ScoutHeartbeat(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+			i, err := models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutHealths(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+
+			err = ScoutHeartbeat(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+			i, err = models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutHealths(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+
+			s, err := models.GetScoutByUUID(db, "59ef7180-f6b2-4129-99bf-970eb4312b4b")
+			Ω(err).Should(BeNil())
+			s.Authorised = true
+			err = s.Update(db)
+			Ω(err).Should(BeNil())
+
+			rec = httptest.NewRecorder()
+			c = e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			err = ScoutHeartbeat(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusOK))
+			i, err = models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutHealths(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+
+			sh, err := models.GetLastScoutHealth(db, s.Id)
+			Ω(err).Should(BeNil())
+			Ω(sh.CPU).Should(BeNumerically("==", float32(0.4)))
+			Ω(sh.Memory).Should(BeNumerically("==", float32(0.1)))
+			Ω(sh.TotalMemory).Should(BeNumerically("==", float32(1233312.0)))
+			Ω(sh.Storage).Should(BeNumerically("==", float32(0.1)))
+		})
+	})
+
 	Context("ScoutLog", func() {
 		It("should drop the request if no authentication is supplied", func() {
 			e := echo.New()
@@ -115,7 +186,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			Ω(i).Should(Equal(int64(0)))
 		})
 
-		It("should create a new log if the scout is authorised", func() {
+		It("should create a new log iff the scout is authorised", func() {
 			e := echo.New()
 			req, err := buildPostRequest("scout.log", "/scout_api/log", "59ef7180-f6b2-4129-99bf-970eb4312b4b", "log contents")
 			Ω(err).Should(BeNil())

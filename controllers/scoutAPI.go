@@ -22,7 +22,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/labstack/echo"
-	"log"
 	"mothership/models"
 	"net/http"
 	"time"
@@ -47,7 +46,6 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 		return nil, nil
 	}
 
-	log.Printf("AUTHORISED")
 	return s, nil
 }
 
@@ -140,7 +138,7 @@ func ScoutHeartbeat(db *sql.DB, c echo.Context) error {
 		return err
 	}
 
-	// Update scout IP address.
+	// Update IP address of scout.
 	s.IpAddress = hb.Health.IpAddress
 	err = s.Update(db)
 	if err != nil {

@@ -43,6 +43,24 @@ func GetScoutHealthById(db *sql.DB, scoutId int64, time time.Time) (*ScoutHealth
 	return &result, err
 }
 
+func GetLastScoutHealth(db *sql.DB, scoutId int64) (*ScoutHealth, error) {
+	const query = `SELECT cpu, memory, total_memory, storage, created_at FROM scout_healths WHERE scout_id = $1 ORDER BY created_at DESC LIMIT 1`
+
+	var result ScoutHealth
+	err := db.QueryRow(query, scoutId).Scan(&result.CPU, &result.Memory, &result.TotalMemory, &result.Storage, &result.CreatedAt)
+	result.ScoutId = scoutId
+
+	return &result, err
+}
+
+func NumScoutHealths(db *sql.DB) (int64, error) {
+	const query = `SELECT COUNT(*) FROM scout_healths`
+	var result int64
+	err := db.QueryRow(query).Scan(&result)
+
+	return result, err
+}
+
 func (s *ScoutHealth) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_healths (scout_id, cpu, memory, total_memory, storage,
 		created_at) VALUES ($1, $2, $3, $4, $5, $6)`
