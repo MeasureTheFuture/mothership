@@ -28,6 +28,7 @@ import (
 	"io"
 	"io/ioutil"
 	"mime/multipart"
+	"mothership/configuration"
 	"mothership/models"
 	"net/http"
 	"net/http/httptest"
@@ -85,11 +86,13 @@ func TestScoutHeartbeat(t *testing.T) {
 
 var _ = Describe("ScoutAPI controller", func() {
 	BeforeSuite(func() {
-		db, err = sql.Open("postgres", "user=cfreeman dbname=mothership_test")
+		config, err := configuration.Parse(os.Getenv("GOPATH") + "/mothership.json")
+		Ω(err).Should(BeNil())
+		db, err = sql.Open("postgres", "user="+config.DBUserName+" dbname="+config.DBTestName)
 		Ω(err).Should(BeNil())
 	})
 
-	AfterEach(func() {
+	cleaner := func() {
 		_, err := db.Exec(`DELETE FROM scout_logs`)
 		Ω(err).Should(BeNil())
 
@@ -98,7 +101,10 @@ var _ = Describe("ScoutAPI controller", func() {
 
 		_, err = db.Exec(`DELETE FROM scouts`)
 		Ω(err).Should(BeNil())
-	})
+	}
+
+	AfterEach(cleaner)
+	AfterSuite(cleaner)
 
 	Context("ScoutCalibration", func() {
 		It("should drop the request if no authentication is supplied", func() {

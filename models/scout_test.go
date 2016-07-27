@@ -22,6 +22,8 @@ import (
 	_ "github.com/lib/pq"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"mothership/configuration"
+	"os"
 	"testing"
 )
 
@@ -36,15 +38,25 @@ var err error
 var _ = Describe("Scout Model", func() {
 
 	BeforeSuite(func() {
-		db, err = sql.Open("postgres", "user=cfreeman dbname=mothership_test")
+		config, err := configuration.Parse(os.Getenv("GOPATH") + "/mothership.json")
+		Ω(err).Should(BeNil())
+		db, err = sql.Open("postgres", "user="+config.DBUserName+" dbname="+config.DBTestName)
 		Ω(err).Should(BeNil())
 	})
 
-	AfterEach(func() {
-		const query = `DELETE FROM scouts`
-		_, err := db.Exec(query)
+	cleaner := func() {
+		_, err := db.Exec(`DELETE FROM scout_logs`)
 		Ω(err).Should(BeNil())
-	})
+
+		_, err = db.Exec(`DELETE FROM scout_healths`)
+		Ω(err).Should(BeNil())
+
+		_, err = db.Exec(`DELETE FROM scouts`)
+		Ω(err).Should(BeNil())
+	}
+
+	AfterEach(cleaner)
+	AfterSuite(cleaner)
 
 	Context("Insert", func() {
 		It("should insert a valid scout into the DB.", func() {

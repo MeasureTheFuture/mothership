@@ -19,27 +19,46 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	_ "github.com/lib/pq"
+	"log"
+	"mothership/configuration"
 	"mothership/controllers"
-	//"net/http"
+	"os"
 )
 
 func main() {
-	db, err := sql.Open("postgres", "user=cfreeman dbname=mothership")
+	var configFile string
+	flag.StringVar(&configFile, "configFile", "mothership.json", "The path to the configuration file")
+	flag.Parse()
+
+	f, err := os.OpenFile("mothership.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Unable to open log file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
+	log.Printf("INFO: Starting mothership")
+
+	config, err := configuration.Parse(configFile)
+	if err != nil {
+		log.Fatalf("ERROR: Can't parse configuration - %s", err)
+	}
+
+	db, err := sql.Open("postgres", "user="+config.DBUserName+" dbname="+config.DBName)
+	if err != nil {
+		log.Fatalf("ERROR: Can't open database - %s", err)
 	}
 	defer db.Close()
 
 	e := echo.New()
-	e.Static("/", "public")
-	e.Static("/css", "public/css")
-	e.Static("/js", "public/js")
-	// e.GET("/", func(c echo.Context) error {
-	// 	return c.String(http.StatusOK, "Hello, World!")
-	// })
+	e.Static("/", config.StaticAssets)
+	e.Static("/css", config.StaticAssets+"/css")
+	e.Static("/js", config.StaticAssets+"/js")
+
 	e.POST("/scout_api/calibrated", func(c echo.Context) error {
 		return controllers.ScoutCalibrated(db, c)
 	})
@@ -53,5 +72,5 @@ func main() {
 		return controllers.ScoutHeartbeat(db, c)
 	})
 
-	e.Run(fasthttp.New(":1323"))
+	e.Run(fasthttp.New(config.Address))
 }

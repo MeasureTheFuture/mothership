@@ -22,7 +22,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/labstack/echo"
-	"log"
 	"mothership/models"
 	"net/http"
 	"time"
@@ -51,7 +50,6 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 }
 
 func ScoutCalibrated(db *sql.DB, c echo.Context) error {
-	log.Printf("log jam1")
 	s, err := isScoutAuthorised(db, c)
 	if err != nil {
 		return err
@@ -60,27 +58,23 @@ func ScoutCalibrated(db *sql.DB, c echo.Context) error {
 		return c.HTML(http.StatusNotFound, "")
 	}
 
-	log.Printf("log jam2")
 	img, err := c.FormFile("file")
 	if err != nil {
 		return err
 	}
 
-	log.Printf("log jam3")
 	src, err := img.Open()
 	if err != nil {
 		return err
 	}
 	defer src.Close()
 
-	log.Printf("log jam4")
 	// Store the calibration frame.
 	var buff bytes.Buffer
 	_, err = buff.ReadFrom(src)
 	s.CalibrationFrame = buff.Bytes()
 	s.State = models.CALIBRATED
 	err = s.Update(db)
-	log.Printf("log jam5")
 	if err != nil {
 		return err
 	}
