@@ -26,10 +26,12 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"mothership/models"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 )
@@ -115,6 +117,47 @@ var _ = Describe("ScoutAPI controller", func() {
 			Ω(i).Should(Equal(int64(0)))
 		})
 
+		It("should update the calibration frame iff the scout is authorised", func() {
+			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1", true, "foo", []byte(""), "calibrating"}
+			err := s.Insert(db)
+			Ω(err).Should(BeNil())
+
+			e := echo.New()
+
+			body := bytes.Buffer{}
+			w := multipart.NewWriter(&body)
+
+			part, err := w.CreateFormFile("file", "calibrationFrame.jpg")
+			Ω(err).Should(BeNil())
+
+			src, err := os.Open("../testdata/calibrationFrame.jpg")
+			Ω(err).Should(BeNil())
+
+			_, err = io.Copy(part, src)
+			Ω(err).Should(BeNil())
+			src.Close()
+
+			req, err := http.NewRequest(echo.POST, "scout_api/calibrated", &body)
+			Ω(err).Should(BeNil())
+			req.Header.Add("Mothership-Authorization", "59ef7180-f6b2-4129-99bf-970eb4312b4b")
+			req.Header.Set("Content-Type", w.FormDataContentType())
+			w.Close()
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = ScoutCalibrated(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusOK))
+
+			s2, err := models.GetScoutByUUID(db, "59ef7180-f6b2-4129-99bf-970eb4312b4b")
+			Ω(err).Should(BeNil())
+			Ω(s2.State).Should(Equal(models.ScoutState("calibrated")))
+			src, err = os.Open("../testdata/calibrationFrame.jpg")
+			Ω(err).Should(BeNil())
+			con, err := ioutil.ReadAll(src)
+			Ω(err).Should(BeNil())
+			Ω(s2.CalibrationFrame).Should(Equal(con))
+		})
 	})
 
 	Context("ScoutHeartbeat", func() {
