@@ -37,7 +37,7 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 	s, err := models.GetScoutByUUID(db, uuid)
 	if err != nil {
 		// Scout doesn't exist, create it and mark it as un-authorized.
-		ns := models.Scout{-1, uuid, "0.0.0.0", false, "Unknown location", []byte(""), "idle"}
+		ns := models.Scout{-1, uuid, "0.0.0.0", false, "Unknown location", "idle"}
 		err = ns.Insert(db)
 		return nil, err
 	}
@@ -72,7 +72,8 @@ func ScoutCalibrated(db *sql.DB, c echo.Context) error {
 	// Store the calibration frame.
 	var buff bytes.Buffer
 	_, err = buff.ReadFrom(src)
-	s.CalibrationFrame = buff.Bytes()
+
+	s.UpdateCalibrationFrame(db, buff.Bytes())
 	s.State = models.CALIBRATED
 	err = s.Update(db)
 	if err != nil {

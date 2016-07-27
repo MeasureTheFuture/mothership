@@ -48,32 +48,31 @@ func (s ScoutState) Value() (driver.Value, error) {
 }
 
 type Scout struct {
-	Id               int64
-	UUID             string
-	IpAddress        string
-	Authorised       bool
-	Name             string
-	CalibrationFrame []byte
-	State            ScoutState
+	Id         int64      `json:"id"`
+	UUID       string     `json:"uuid"`
+	IpAddress  string     `json:"ip_address"`
+	Authorised bool       `json:"authorised"`
+	Name       string     `json:"name"`
+	State      ScoutState `json:state`
 }
 
 func GetScoutById(db *sql.DB, id int64) (*Scout, error) {
-	const query = `SELECT uuid, ip_address, authorised, name, calibration_frame, state
+	const query = `SELECT uuid, ip_address, authorised, name, state
 				   FROM scouts WHERE id = $1`
 	var result Scout
 	err := db.QueryRow(query, id).Scan(&result.UUID, &result.IpAddress, &result.Authorised,
-		&result.Name, &result.CalibrationFrame, &result.State)
+		&result.Name, &result.State)
 	result.Id = id
 
 	return &result, err
 }
 
 func GetScoutByUUID(db *sql.DB, uuid string) (*Scout, error) {
-	const query = `SELECT id, ip_address, authorised, name, calibration_frame, state
+	const query = `SELECT id, ip_address, authorised, name, state
 				   FROM scouts WHERE uuid = $1`
 	var result Scout
 	err := db.QueryRow(query, uuid).Scan(&result.Id, &result.IpAddress, &result.Authorised,
-		&result.Name, &result.CalibrationFrame, &result.State)
+		&result.Name, &result.State)
 	result.UUID = uuid
 
 	return &result, err
@@ -87,16 +86,29 @@ func NumScouts(db *sql.DB) (int64, error) {
 	return result, err
 }
 
+func (s *Scout) UpdateCalibrationFrame(db *sql.DB, frame []byte) error {
+	const query = `UPDATE scouts SET calibration_frame = $1 WHERE id = $2`
+	_, err := db.Exec(query, frame, s.Id)
+	return err
+}
+
+func (s *Scout) GetCalibrationFrame(db *sql.DB) ([]byte, error) {
+	const query = `SELECT calibration_frame FROM scouts WHERE id = $1`
+	var result []byte
+	err := db.QueryRow(query, s.Id).Scan(&result)
+
+	return result, err
+}
+
 func (s *Scout) Insert(db *sql.DB) error {
-	const query = `INSERT INTO scouts (uuid, ip_address, authorised, name, calibration_frame, state)
-				   VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
-	return db.QueryRow(query, s.UUID, s.IpAddress, s.Authorised, s.Name, s.CalibrationFrame,
-		s.State).Scan(&s.Id)
+	const query = `INSERT INTO scouts (uuid, ip_address, authorised, name, state)
+				   VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	return db.QueryRow(query, s.UUID, s.IpAddress, s.Authorised, s.Name, s.State).Scan(&s.Id)
 }
 
 func (s *Scout) Update(db *sql.DB) error {
 	const query = `UPDATE scouts SET uuid = $1, ip_address = $2, authorised = $3, name = $4,
-				   calibration_frame = $5, state = $6 WHERE id = $7`
-	_, err := db.Exec(query, s.UUID, s.IpAddress, s.Authorised, s.Name, s.CalibrationFrame, s.State, s.Id)
+				   state = $5 WHERE id = $6`
+	_, err := db.Exec(query, s.UUID, s.IpAddress, s.Authorised, s.Name, s.State, s.Id)
 	return err
 }

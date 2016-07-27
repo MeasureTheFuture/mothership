@@ -39,7 +39,7 @@ var _ = Describe("Scout Health Model", func() {
 
 	Context("Insert", func() {
 		It("should insert a valid scouthealth into the DB.", func() {
-			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo", []byte(""), "idle"}
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo", "idle"}
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 

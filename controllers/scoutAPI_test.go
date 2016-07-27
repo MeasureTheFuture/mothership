@@ -124,7 +124,7 @@ var _ = Describe("ScoutAPI controller", func() {
 		})
 
 		It("should update the calibration frame iff the scout is authorised", func() {
-			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1", true, "foo", []byte(""), "calibrating"}
+			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1", true, "foo", "calibrating"}
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
@@ -162,7 +162,9 @@ var _ = Describe("ScoutAPI controller", func() {
 			Ω(err).Should(BeNil())
 			con, err := ioutil.ReadAll(src)
 			Ω(err).Should(BeNil())
-			Ω(s2.CalibrationFrame).Should(Equal(con))
+			frm, err := s2.GetCalibrationFrame(db)
+			Ω(err).Should(BeNil())
+			Ω(frm).Should(Equal(con))
 		})
 	})
 

@@ -16,6 +16,7 @@ Experimental software for powering the measure the future 'motherships'. These a
 * ~~move database connection/webserver metadata to config file.~~
 * ~~Test successful calibrated called in scoutAPI.~~
 * Prune/Tidy unused elements from main.css.
+* ~~Remove calibrationFrame from scout struct.~~
 
 ## License
 

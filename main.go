@@ -59,6 +59,24 @@ func main() {
 	e.Static("/css", config.StaticAssets+"/css")
 	e.Static("/js", config.StaticAssets+"/js")
 
+	// Front-end API for displaying results from the scouts.
+	e.GET("/scouts", func(c echo.Context) error {
+		return controllers.GetScouts(db, c)
+	})
+
+	e.GET("/scouts/:id/frame.jpg", func(c echo.Context) error {
+		return controllers.GetScoutFrame(db, c)
+	})
+
+	e.GET("/scouts/:id", func(c echo.Context) error {
+		return controllers.GetScout(db, c)
+	})
+
+	e.PUT("/scouts/:id", func(c echo.Context) error {
+		return controllers.UpdateScout(db, c)
+	})
+
+	// SCOUT_API for recieving data from the scout hardware.
 	e.POST("/scout_api/calibrated", func(c echo.Context) error {
 		return controllers.ScoutCalibrated(db, c)
 	})
