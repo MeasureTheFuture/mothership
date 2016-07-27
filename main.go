@@ -23,7 +23,7 @@ import (
 	"github.com/labstack/echo/engine/fasthttp"
 	_ "github.com/lib/pq"
 	"mothership/controllers"
-	"net/http"
+	//"net/http"
 )
 
 func main() {
@@ -34,9 +34,12 @@ func main() {
 	defer db.Close()
 
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	e.Static("/", "public")
+	e.Static("/css", "public/css")
+	e.Static("/js", "public/js")
+	// e.GET("/", func(c echo.Context) error {
+	// 	return c.String(http.StatusOK, "Hello, World!")
+	// })
 	e.POST("/scout_api/calibrated", func(c echo.Context) error {
 		return controllers.ScoutCalibrated(db, c)
 	})
