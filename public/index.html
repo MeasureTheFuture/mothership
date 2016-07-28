@@ -5,41 +5,92 @@
 <title>Measure the Future</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="js/react.js"></script>
+<script src="js/react-dom.js"></script>
+<script src="js/browser.min.js"></script>
+
 <link rel="stylesheet" href="css/pure-min.css">
 <link rel="stylesheet" href="css/grids-responsive-min.css">
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
 </head>
 <body>
 <div id="layout" class="pure-g">
   <div class="sidebar pure-u-1 pure-u-md-1-4">
     <div class="header">
-      <h1 class="brand-title">Measure the Future</h1>
-
+      <h1 class="brand"><img class="pure-img" alt='Measure the Future logo' src='/img/logo.gif' /></h1>
       <nav class="nav">
-        <ul class="nav-list">
-          <li class="nav-item">
-            <a class="pure-button" href="http://purecss.io">Location 1</a>
-          </li>
-          <li class="nav-item">
-            <a class="pure-button" href="http://yuilibrary.com">Location 2</a>
-          </li>
+        <ul class="navList" id="locationList">
+          <li class="nav-item"><a href="http://purecss.io">[Location 1]</a></li>
+          <li class="nav-item"><a href="http://yuilibrary.com">[Location 2]</a></li>
         </ul>
       </nav>
     </div>
   </div>
   <div class="content pure-u-1 pure-u-md-3-4">
-    <div>
-      <div class="posts">
-        <section class="post">
-          <header class="post-header">
-            <h2 class="post-title">New Location 1</h2>
-            <p class="post-meta"></p>
-          </header>
-          <div class="post-description">
-            Controls and details will be here.
-          </div>
-        </section>
+    <div class="location">
+      <header class="location-header">
+        <h2 class="location-title">Location 1</h2>
+        <p class="location-meta"><a href="edit">[<i class="fa fa-pencil"></i> edit</a>]</p>
+      </header>
+      <div id="location-details">
+        <h3>0 VISITORS</h3>
+        <img class="pure-img" alt='test' src='img/off-frame.gif'/>
+        <p class="location-meta"><a href="activate">[<i class="fa fa-power-off"></i> activate</a>]</p>
       </div>
     </div>
   </div>
+
+  <script type="text/babel">
+    function getJSON(url) {
+      console.log(url);
+
+      var Httpreq = new XMLHttpRequest(); // a new request
+      Httpreq.open("GET", url, true);
+      Httpreq.send(null);
+
+      Httpreq.onreadystatechange = function() {
+        if (Httpreq.readyState == 4 && Httpreq.status == 200) {
+          console.log(JSON.parse(Httpreq.responseText));
+        }
+      };
+    }
+    getJSON("http://"+window.location.host+"/scouts");
+
+    var data = [
+      {id: 1, name: "Location 1"},
+      {id: 2, name: "Location 2"}
+    ];
+
+    var NavItem = React.createClass({
+      render: function() {
+        return (
+          <li className="navItem"><a href="#">[{this.props.name}]</a></li>
+        );
+      }
+    });
+
+    var NavList = React.createClass({
+      render: function() {
+        var navNodes = this.props.data.map(function(location) {
+          return (
+            <NavItem name={location.name} key={location.id} />
+          )
+        });
+
+        return (
+          <div className="navList">
+            {navNodes}
+          </div>
+        )
+      }
+    })
+
+    ReactDOM.render(
+      <NavList data={data} />,
+      document.getElementById('locationList')
+    );
+
+  </script>
+
 </body>
