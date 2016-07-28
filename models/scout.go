@@ -78,6 +78,29 @@ func GetScoutByUUID(db *sql.DB, uuid string) (*Scout, error) {
 	return &result, err
 }
 
+func GetAllScouts(db *sql.DB) ([]*Scout, error) {
+	const query = `SELECT id, uuid, ip_address, authorised, name, state FROM scouts`
+
+	var result []*Scout
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var s Scout
+		err = rows.Scan(&s.Id, &s.UUID, &s.IpAddress, &s.Authorised, &s.Name, &s.State)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, &s)
+	}
+
+	return result, nil
+}
+
 func NumScouts(db *sql.DB) (int64, error) {
 	const query = `SELECT COUNT(*) FROM scouts`
 	var result int64

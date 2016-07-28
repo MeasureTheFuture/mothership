@@ -85,6 +85,7 @@ func TestScoutHeartbeat(t *testing.T) {
 }
 
 var _ = Describe("ScoutAPI controller", func() {
+
 	BeforeSuite(func() {
 		config, err := configuration.Parse(os.Getenv("GOPATH") + "/mothership.json")
 		Ω(err).Should(BeNil())

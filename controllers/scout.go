@@ -26,8 +26,12 @@ import (
 )
 
 func GetScouts(db *sql.DB, c echo.Context) error {
+	s, err := models.GetAllScouts(db)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	return c.JSON(http.StatusOK, s)
 }
 
 func GetScoutFrame(db *sql.DB, c echo.Context) error {
@@ -46,7 +50,11 @@ func GetScoutFrame(db *sql.DB, c echo.Context) error {
 		return err
 	}
 
-	return c.HTML(http.StatusOK, "render JPG.")
+	c.Response().Header().Set(echo.HeaderContentType, "image/jpeg")
+	c.Response().WriteHeader(http.StatusOK)
+	_, err = c.Response().Write(frame)
+
+	return err
 }
 
 func GetScout(db *sql.DB, c echo.Context) error {
