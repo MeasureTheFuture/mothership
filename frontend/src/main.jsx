@@ -17,6 +17,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Redux = require('redux');
+var reducers = require('./reducers');
 
 var Introduction = React.createClass({
   render: function() {
@@ -78,13 +79,10 @@ var Application = React.createClass({
 
     Httpreq.onreadystatechange = function() {
       if (Httpreq.readyState == 4 && Httpreq.status == 200) {
-        this.setState({data: JSON.parse(Httpreq.responseText)});
+        var locations = JSON.parse(Httpreq.responseText)
+        this.props.store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
       }
     }.bind(this);
-  },
-
-  getInitialState: function() {
-    return {data: []};
   },
 
   componentDidMount: function() {
@@ -93,8 +91,10 @@ var Application = React.createClass({
 
   render: function() {
     var mainContent = <Introduction />
-    if (this.state.data.length) {
-      mainContent = <Location location={this.state.data[0]} />
+    var state = this.props.store.getState();
+
+    if (state.locations.length) {
+      mainContent = <Location location={state.locations[0]} />
     }
 
     return (
@@ -102,7 +102,7 @@ var Application = React.createClass({
         <div className="sidebar pure-u-1 pure-u-md-1-4">
           <div className="header">
             <h1 className="brand"><img className="pure-img" alt='Measure the Future logo' src='/img/logo.gif' /></h1>
-            <nav className="nav"><NavList data={this.state.data} /></nav>
+            <nav className="nav"><NavList data={state.locations} /></nav>
           </div>
         </div>
         <div className="content pure-u-1 pure-u-md-3-4" id="results">
@@ -113,7 +113,15 @@ var Application = React.createClass({
   }
 })
 
-ReactDOM.render(
-  <Application />,
-  document.getElementById('layout')
-);
+
+const store = Redux.createStore(reducers)
+
+function render() {
+  ReactDOM.render(
+    <Application store={store}/>,
+    document.getElementById('layout')
+  );
+}
+
+render();
+store.subscribe(render)

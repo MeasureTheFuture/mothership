@@ -14,9 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+const initialState = {
+  locations:[],
+  active:0
+}
+
 function mothership(state, action) {
   if (state === undefined) {
-    return {locations:[], active:0};
+    return initialState;
   }
 
   switch (action.type) {
