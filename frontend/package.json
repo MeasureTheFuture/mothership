@@ -1,0 +1,29 @@
+{
+  "name": "mothership",
+  "version": "0.1.0",
+  "description": "Front-end for the mothership application",
+  "main": "main.jsx",
+  "scripts": {
+    "build": "browserify -t [ reactify --es6 ] src/main.jsx -o ../public/bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeasureTheFuture/mothership.git"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/MeasureTheFuture/mothership/issues"
+  },
+  "homepage": "https://github.com/MeasureTheFuture/mothership#readme",
+  "dependencies": {
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
+    "react-redux": "^4.4.5",
+    "reactify": "^1.1.1",
+    "redux": "^3.5.2"
+  },
+  "devDependencies": {
+    "redux-devtools": "^3.3.1"
+  }
+}

@@ -59,7 +59,6 @@ func main() {
 	e.Static("/css", config.StaticAssets+"/css")
 	e.Static("/fonts", config.StaticAssets+"/fonts")
 	e.Static("/img", config.StaticAssets+"/img")
-	e.Static("/js", config.StaticAssets+"/js")
 
 	// Front-end API for displaying results from the scouts.
 	e.GET("/scouts", func(c echo.Context) error {

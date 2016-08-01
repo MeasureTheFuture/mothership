@@ -1,3 +1,6 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+
 var Introduction = React.createClass({
   render: function() {
     return (
