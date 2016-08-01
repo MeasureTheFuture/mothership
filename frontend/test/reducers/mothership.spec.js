@@ -16,11 +16,72 @@
  */
 var expect = require('expect')
 var mothership = require('../../src/reducers')
+var locations = [{ "id":1,
+                   "uuid":"800fd548-2d2b-4185-885d-6323ccbe88a0",
+                   "ip_address":"192.168.0.1",
+                   "authorised":true,
+                   "name":"Chattanooga",
+                   "State":"idle"},
+                 { "id":2,
+                   "uuid":"59ef7180-f6b2-4129-99bf-970eb4312b4b",
+                   "ip_address":"192.168.0.1",
+                   "authorised":true,
+                   "name":"Brisbane",
+                   "State":"calibrated"}]
 
 describe('reducers', () => {
- 	describe('mothership', () => {
- 		it('should provide the initial state', () => {
- 			expect(mothership(undefined, {})).toBe({locations:[], active:0})
- 		})
- 	})
+  describe('mothership', () => {
+    it('should provide the initial state', () => {
+      expect(
+        mothership(undefined, {})
+      ).toEqual({locations:[], active:0})
+    })
+
+    it('should handle update locations', () => {
+      expect(
+        mothership({locations:[], active:0}, {
+          type:'UPDATE_LOCATIONS',
+          locations:locations})
+      ).toEqual({
+        locations:locations,
+        active:0
+      })
+    })
+
+    it('should not allow a negative active index', () => {
+      expect(
+        mothership({locations:locations, active:0}, {
+          type:'SET_ACTIVE',
+          active: -1
+        })
+      ).toEqual({
+        locations:locations,
+        active: 0
+      })
+    })
+
+    it('should not allow an index larger than length of locations', () => {
+      expect(
+        mothership({locations:locations, active: 0}, {
+          type:'SET_ACTIVE',
+          active: 3
+        })
+      ).toEqual({
+        locations:locations,
+        active: 1
+      })
+    })
+
+    it('should set a valid index between 0 and the upper range', () => {
+      expect(
+        mothership({locations:locations, active:0}, {
+          type:'SET_ACTIVE',
+          active: 1
+        })
+      ).toEqual({
+        locations:locations,
+        active: 1
+      })
+    })
+  })
  })

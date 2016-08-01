@@ -14,15 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 function mothership(state, action) {
-  if (state === 'undefined') {
-  	return {locations:[], active:0};
+  if (state === undefined) {
+    return {locations:[], active:0};
   }
 
-  switch(action.type) {
+  switch (action.type) {
+    case 'UPDATE_LOCATIONS':
+      return {
+        locations: action.locations,
+        active: 0
+      }
+
+    case 'SET_ACTIVE':
+      return {
+        locations: state.locations,
+        active: Math.min(state.locations.length - 1, Math.max(0, action.active))
+      }
+
     default:
-      return {locations:[], active:0};
+      return state;
   }
 }
 
