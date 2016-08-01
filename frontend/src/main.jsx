@@ -19,6 +19,8 @@ var ReactDOM = require('react-dom');
 var Redux = require('redux');
 var reducers = require('./reducers');
 
+const store = Redux.createStore(reducers)
+
 var Introduction = React.createClass({
   render: function() {
     return (
@@ -31,10 +33,13 @@ var Introduction = React.createClass({
 
 var Location = React.createClass({
   render: function() {
+    var state = store.getState();
+    var location = state.locations[state.active];
+
     return (
       <div className="location">
         <header className="location-header">
-          <h2 className="location-title">{this.props.location.name}</h2>
+          <h2 className="location-title">{location.name}</h2>
           <p className="location-meta"><a href="edit">[<i className="fa fa-pencil"></i> edit</a>]</p>
         </header>
         <div id="location-details">
@@ -50,16 +55,18 @@ var Location = React.createClass({
 var NavItem = React.createClass({
   render: function() {
     return (
-      <li className="navItem"><a href="#">[{this.props.name}]</a></li>
+      <li className="navItem">
+        <a href="#" onClick={console.log("clicked")}>[{this.props.name}]</a>
+      </li>
     );
   }
 });
 
 var NavList = React.createClass({
   render: function() {
-    var navNodes = this.props.data.map(function(location) {
+    var navNodes = this.props.data.map(function(location, index) {
       return (
-        <NavItem name={location.name} key={location.id} />
+        <NavItem name={location.name} key={index} />
       )
     });
 
@@ -73,14 +80,14 @@ var NavList = React.createClass({
 
 var Application = React.createClass({
   loadFromServer: function () {
-    var Httpreq = new XMLHttpRequest(); // a new request
+    var Httpreq = new XMLHttpRequest();
     Httpreq.open("GET", "http://"+window.location.host+"/scouts", true);
     Httpreq.send(null);
 
     Httpreq.onreadystatechange = function() {
       if (Httpreq.readyState == 4 && Httpreq.status == 200) {
         var locations = JSON.parse(Httpreq.responseText)
-        this.props.store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
+        store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
       }
     }.bind(this);
   },
@@ -91,10 +98,10 @@ var Application = React.createClass({
 
   render: function() {
     var mainContent = <Introduction />
-    var state = this.props.store.getState();
+    var state = store.getState();
 
     if (state.locations.length) {
-      mainContent = <Location location={state.locations[0]} />
+      mainContent = <Location />
     }
 
     return (
@@ -113,12 +120,9 @@ var Application = React.createClass({
   }
 })
 
-
-const store = Redux.createStore(reducers)
-
 function render() {
   ReactDOM.render(
-    <Application store={store}/>,
+    <Application />,
     document.getElementById('layout')
   );
 }
