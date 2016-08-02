@@ -100,6 +100,14 @@ func UpdateScout(db *sql.DB, c echo.Context) error {
 		return err
 	}
 
+	if ns.State == models.CALIBRATING {
+		go http.Get("http://" + ns.IpAddress + "/calibrate")
+
+	} else if ns.State == models.MEASURING {
+		go http.Get("http://" + ns.IpAddress + "/measure/start")
+
+	}
+
 	c.Request()
 	return c.HTML(http.StatusOK, "updated succesfully")
 }
