@@ -96,6 +96,24 @@ var ActivateAction = React.createClass({
   }
 })
 
+var MeasureAction = React.createClass({
+  handleMeasure: function() {
+    var state = store.getState();
+    var location = Object.assign({}, state.locations[state.active]);
+
+    location.state = 'measuring';
+    state.locations[state.active] = location;
+
+    updateLocations(state.locations, state.active);
+  },
+
+  render: function() {
+    return (
+      <a href="#" onClick={this.handleMeasure}>[<i className="fa fa-line-chart"></i> measure]</a>
+    );
+  }
+})
+
 var CalibrateAction = React.createClass({
   handleCalibrate: function() {
     var state = store.getState();
@@ -104,14 +122,13 @@ var CalibrateAction = React.createClass({
     location.state = 'calibrating';
     state.locations[state.active] = location;
 
-    console.log("updating");
     updateLocations(state.locations, state.active);
   },
 
   render: function() {
     return (
       <a href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> calibrate]</a>
-    )
+    );
   }
 })
 
@@ -122,9 +139,10 @@ var PrimaryActions = React.createClass({
 
     var onOff = (location.authorised ? <DeactivateAction /> : <ActivateAction />);
     var calibrate = ((location.authorised && location.state == 'idle') ? <CalibrateAction /> : "");
+    var measure = ((location.authorised && location.state == 'calibrated') ? <MeasureAction /> : "");
 
     return (
-      <p className="location-meta">{onOff}{calibrate}</p>
+      <p className="location-meta">{onOff} {calibrate} {measure}</p>
     );
   }
 })
