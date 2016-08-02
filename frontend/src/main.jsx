@@ -19,7 +19,7 @@ var ReactDOM = require('react-dom');
 var Redux = require('redux');
 var reducers = require('./reducers');
 
-const store = Redux.createStore(reducers)
+const store = Redux.createStore(reducers);
 
 var Introduction = React.createClass({
   render: function() {
@@ -53,10 +53,14 @@ var Location = React.createClass({
 });
 
 var NavItem = React.createClass({
+  handleClick: function() {
+    store.dispatch({ type:'SET_ACTIVE', active:this.props.idx})
+  },
+
   render: function() {
     return (
       <li className="navItem">
-        <a href="#" onClick={console.log("clicked")}>[{this.props.name}]</a>
+        <a href="#" onClick={this.handleClick}>[{this.props.name}]</a>
       </li>
     );
   }
@@ -66,7 +70,7 @@ var NavList = React.createClass({
   render: function() {
     var navNodes = this.props.data.map(function(location, index) {
       return (
-        <NavItem name={location.name} key={index} />
+        <NavItem name={location.name} key={index} idx={index} />
       )
     });
 
@@ -97,12 +101,8 @@ var Application = React.createClass({
   },
 
   render: function() {
-    var mainContent = <Introduction />
     var state = store.getState();
-
-    if (state.locations.length) {
-      mainContent = <Location />
-    }
+    var mainContent = ((state.locations.length) ? <Location /> : <Introduction />);
 
     return (
       <div className="application">
