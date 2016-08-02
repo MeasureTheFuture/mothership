@@ -18,6 +18,8 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	. "github.com/onsi/ginkgo"
@@ -25,11 +27,9 @@ import (
 	"mothership/models"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
-	"strconv"
-	"encoding/json"
-	"bytes"
 )
 
 func TestScout(t *testing.T) {
