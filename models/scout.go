@@ -53,7 +53,7 @@ type Scout struct {
 	IpAddress  string     `json:"ip_address"`
 	Authorised bool       `json:"authorised"`
 	Name       string     `json:"name"`
-	State      ScoutState `json:state`
+	State      ScoutState `json:"state"`
 }
 
 func GetScoutById(db *sql.DB, id int64) (*Scout, error) {

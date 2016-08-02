@@ -21,6 +21,21 @@ var reducers = require('./reducers');
 
 const store = Redux.createStore(reducers);
 
+function updateLocations(locations, id) {
+  var l = locations[id]
+
+  // Push the updated location to the backend.
+  var Httpreq = new XMLHttpRequest();
+  Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
+  Httpreq.send(JSON.stringify(l));
+
+  Httpreq.onreadystatechange = function() {
+    if (Httpreq.readyState == 4 && Httpreq.status == 200) {
+      store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
+    }
+  }
+}
+
 var Introduction = React.createClass({
   render: function() {
     return (
@@ -31,27 +46,103 @@ var Introduction = React.createClass({
   }
 })
 
-var Location = React.createClass({
-  handleActivate: function() {
+var LocationLabel = React.createClass({
+  render: function() {
     var state = store.getState();
     var location = state.locations[state.active];
 
+    return (
+      <header className="locationLabel">
+          <h2 className="location-title">{location.name}</h2>
+          <p className="location-meta"><a href="edit">[<i className="fa fa-pencil"></i> edit</a>]</p>
+      </header>
+    )
+  }
+});
+
+var DeactivateAction = React.createClass({
+  handleDeactivate: function() {
+    var state = store.getState();
+    var location = Object.assign({}, state.locations[state.active]);
+
     location.authorised = false;
-    console.log(JSON.stringify(location));
-    console.log("http://"+window.location.host+"/scouts/"+location.id);
+    state.locations[state.active] = location;
 
-    // Push the updated location to the backend.
-    var Httpreq = new XMLHttpRequest();
-    Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+location.id, true);
-    Httpreq.send(JSON.stringify(location));
+    updateLocations(state.locations, state.active)
+  },
 
-    Httpreq.onreadystatechange = function() {
-      if (Httpreq.readyState == 4 && Httpreq.status == 200) {
-        console.log("Updated scout: " + Httpreq.responseText);
-        //var locations = JSON.parse(Httpreq.responseText)
-        //store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
-      }
-    }.bind(this);
+  render: function() {
+    return (
+      <a href="#" className="warning" onClick={this.handleDeactivate}>[<i className="fa fa-power-off"></i> deactivate]</a>
+    )
+  }
+})
+
+var ActivateAction = React.createClass({
+  handleActivate: function() {
+    var state = store.getState();
+    var location = Object.assign({}, state.locations[state.active]);
+
+    location.authorised = true;
+    state.locations[state.active] = location;
+
+    updateLocations(state.locations, state.active)
+  },
+
+  render: function() {
+    return (
+      <a href="#" onClick={this.handleActivate}>[<i className="fa fa-power-off"></i> activate]</a>
+    );
+  }
+})
+
+var CalibrateAction = React.createClass({
+  handleCalibrate: function() {
+    var state = store.getState();
+    var location = Object.assign({}, state.locations[state.active]);
+
+    location.state = 'calibrating';
+    state.locations[state.active] = location;
+
+    console.log("updating");
+    updateLocations(state.locations, state.active);
+  },
+
+  render: function() {
+    return (
+      <a href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> calibrate]</a>
+    )
+  }
+})
+
+var PrimaryActions = React.createClass({
+  render: function() {
+    var state = store.getState();
+    var location = state.locations[state.active];
+
+    var onOff = (location.authorised ? <DeactivateAction /> : <ActivateAction />);
+    var calibrate = ((location.authorised && location.state == 'idle') ? <CalibrateAction /> : "");
+
+    return (
+      <p className="location-meta">{onOff}{calibrate}</p>
+    );
+  }
+})
+
+var Location = React.createClass({
+  getFrameURL: function() {
+    var state = store.getState();
+    var location = state.locations[state.active];
+
+    if (!location.authorised) {
+      return 'img/off-frame.gif';
+    }
+
+    if (location.state == 'measuring') {
+      return 'scouts/'+location.id+'/frame.jpg';
+    }
+
+    return 'img/uncalibrated-frame.gif';
   },
 
   render: function() {
@@ -60,14 +151,11 @@ var Location = React.createClass({
 
     return (
       <div className="location">
-        <header className="location-header">
-          <h2 className="location-title">{location.name}</h2>
-          <p className="location-meta"><a href="edit">[<i className="fa fa-pencil"></i> edit</a>]</p>
-        </header>
+        <LocationLabel />
         <div id="location-details">
           <h3>0 VISITORS</h3>
-          <img className="pure-img" alt='test' src='img/off-frame.gif'/>
-          <p className="location-meta"><a href="#" onClick={this.handleActivate}>[<i className="fa fa-power-off"></i> activate</a>]</p>
+          <img className="pure-img" alt='test' src={this.getFrameURL()}/>
+          <p className="location-meta"><PrimaryActions /></p>
         </div>
       </div>
     );

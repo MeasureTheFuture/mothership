@@ -92,6 +92,7 @@ The following steps will configure an OSX machine as a development environment f
 * ~~Remove calibrationFrame from scout struct.~~
 * Tidy up responsive design.
 * ~~Use Location 1, Location 2, ..., Location N for automatically detected scouts.~~
+* Have mothership notify scouts as required per interactions on the UI.
 
 ## License
 

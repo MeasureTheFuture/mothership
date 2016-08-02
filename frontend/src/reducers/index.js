@@ -19,6 +19,10 @@ const initialState = {
   active:0
 }
 
+function selectLocation(value, l) {
+  return value.id == l.id;
+}
+
 function mothership(state, action) {
   if (state === undefined) {
     return initialState;
