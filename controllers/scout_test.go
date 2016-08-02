@@ -29,6 +29,7 @@ import (
 	"testing"
 	"strconv"
 	"encoding/json"
+	"bytes"
 )
 
 func TestScout(t *testing.T) {
@@ -100,8 +101,37 @@ var _ = Describe("Scout controller", func() {
 			var ns models.Scout
 			err = json.Unmarshal(rec.Body.Bytes(), &ns)
 			Ω(err).Should(BeNil())
-
 			Ω(ns).Should(Equal(s))
+		})
+
+		It("should be able to update a single scout", func() {
+			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1", true, "foo", "calibrating"}
+			err := s.Insert(db)
+			Ω(err).Should(BeNil())
+
+			s.IpAddress = "192.168.0.5"
+
+			e := echo.New()
+			b, err := json.Marshal(s)
+			Ω(err).Should(BeNil())
+			req, err := http.NewRequest(echo.PUT, "/scouts/", bytes.NewReader(b))
+			Ω(err).Should(BeNil())
+
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c.SetPath("/scouts/:id")
+			c.SetParamNames("id")
+			c.SetParamValues(strconv.FormatInt(s.Id, 10))
+
+			err = UpdateScout(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(200))
+
+			ns, err := models.GetScoutById(db, s.Id)
+			Ω(err).Should(BeNil())
+			Ω(ns).Should(Equal(&s))
 		})
 	})
 })
