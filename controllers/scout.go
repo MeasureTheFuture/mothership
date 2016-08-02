@@ -19,7 +19,10 @@ package controllers
 
 import (
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"github.com/labstack/echo"
+	"io/ioutil"
 	"mothership/models"
 	"net/http"
 	"strconv"
@@ -72,5 +75,31 @@ func GetScout(db *sql.DB, c echo.Context) error {
 }
 
 func UpdateScout(db *sql.DB, c echo.Context) error {
-	return nil
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(c.Request().Body())
+	if err != nil {
+		return err
+	}
+
+	var ns models.Scout
+	err = json.Unmarshal(body, &ns)
+	if err != nil {
+		return err
+	}
+
+	if id != ns.Id {
+		return errors.New("Mismatched Ids")
+	}
+
+	err = ns.Update(db)
+	if err != nil {
+		return err
+	}
+
+	c.Request()
+	return c.HTML(http.StatusOK, "updated succesfully")
 }

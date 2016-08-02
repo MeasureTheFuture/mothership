@@ -32,6 +32,28 @@ var Introduction = React.createClass({
 })
 
 var Location = React.createClass({
+  handleActivate: function() {
+    var state = store.getState();
+    var location = state.locations[state.active];
+
+    location.authorised = false;
+    console.log(JSON.stringify(location));
+    console.log("http://"+window.location.host+"/scouts/"+location.id);
+
+    // Push the updated location to the backend.
+    var Httpreq = new XMLHttpRequest();
+    Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+location.id, true);
+    Httpreq.send(JSON.stringify(location));
+
+    Httpreq.onreadystatechange = function() {
+      if (Httpreq.readyState == 4 && Httpreq.status == 200) {
+        console.log("Updated scout: " + Httpreq.responseText);
+        //var locations = JSON.parse(Httpreq.responseText)
+        //store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
+      }
+    }.bind(this);
+  },
+
   render: function() {
     var state = store.getState();
     var location = state.locations[state.active];
@@ -45,7 +67,7 @@ var Location = React.createClass({
         <div id="location-details">
           <h3>0 VISITORS</h3>
           <img className="pure-img" alt='test' src='img/off-frame.gif'/>
-          <p className="location-meta"><a href="activate">[<i className="fa fa-power-off"></i> activate</a>]</p>
+          <p className="location-meta"><a href="#" onClick={this.handleActivate}>[<i className="fa fa-power-off"></i> activate</a>]</p>
         </div>
       </div>
     );

@@ -79,7 +79,7 @@ func buildPostRequest(fileName string, url string, uuid string, content string) 
 	return req, nil
 }
 
-func TestScoutHeartbeat(t *testing.T) {
+func TestScoutAPI(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "ScoutAPI controller Suite")
 }
