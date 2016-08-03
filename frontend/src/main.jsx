@@ -233,7 +233,7 @@ var Application = React.createClass({
     var mainContent = ((state.locations.length) ? <Location /> : <Introduction />);
 
     return (
-      <div className="application">
+      <div className="application pure-g">
         <div className="sidebar pure-u-1 pure-u-md-1-4">
           <div className="header">
             <h1 className="brand"><img className="pure-img" alt='Measure the Future logo' src='/img/logo.gif' /></h1>
@@ -251,7 +251,7 @@ var Application = React.createClass({
 function render() {
   ReactDOM.render(
     <Application />,
-    document.getElementById('layout')
+    document.getElementById('body')
   );
 }
 
