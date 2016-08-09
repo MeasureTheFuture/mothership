@@ -158,6 +158,8 @@ var Location = React.createClass({
 
     if (location.state == 'measuring') {
       return 'scouts/'+location.id+'/frame.jpg';
+    } else if (location.state == 'calibrating') {
+      return 'img/calibrating-frame.gif';
     }
 
     return 'img/uncalibrated-frame.gif';

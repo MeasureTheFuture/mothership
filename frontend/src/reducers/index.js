@@ -32,7 +32,7 @@ function mothership(state, action) {
     case 'UPDATE_LOCATIONS':
       return {
         locations: action.locations,
-        active: 0
+        active: state.active
       }
 
     case 'SET_ACTIVE':
