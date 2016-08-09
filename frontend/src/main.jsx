@@ -184,7 +184,7 @@ var PrimaryActions = React.createClass({
     var measure = ((location.authorised && location.state == 'calibrated') ? <MeasureAction /> : "");
 
     return (
-      <p className="location-meta">{onOff} {calibrate} {measure}</p>
+      <p className="location-meta">{onOff} {calibrate}</p>
     );
   }
 })
