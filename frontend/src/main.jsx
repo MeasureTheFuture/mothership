@@ -46,7 +46,45 @@ var Introduction = React.createClass({
   }
 })
 
+var LocationEdit = React.createClass({
+  handleSave: function() {
+    var state = store.getState();
+    var location = Object.assign({}, state.locations[state.active]);
+
+    location.name = document.getElementById('locationInput').value;
+    console.log("saving: " + location.name);
+    state.locations[state.active] = location;
+
+    updateLocations(state.locations, state.active);
+
+    ReactDOM.render(
+      <LocationLabel />,
+      document.getElementById('locationName')
+    )
+  },
+
+  render: function() {
+    var state = store.getState();
+    var location = state.locations[state.active];
+
+    return (
+      <header className="locationLabel">
+        <form className="pure-form">
+          <h2 className="location-title"><input id="locationInput" className="location-title" type="text" placeholder={location.name} /></h2>
+          <p className="location-meta"><a href="#" onClick={this.handleSave}>[<i className="fa fa-save"></i> save</a>]</p>
+        </form>
+      </header>
+    )
+  }
+});
+
 var LocationLabel = React.createClass({
+  handleEdit: function() {
+    ReactDOM.render(
+      <LocationEdit />,
+      document.getElementById('locationName'))
+  },
+
   render: function() {
     var state = store.getState();
     var location = state.locations[state.active];
@@ -54,7 +92,7 @@ var LocationLabel = React.createClass({
     return (
       <header className="locationLabel">
           <h2 className="location-title">{location.name}</h2>
-          <p className="location-meta"><a href="edit">[<i className="fa fa-pencil"></i> edit</a>]</p>
+          <p className="location-meta"><a href="#" onClick={this.handleEdit}>[<i className="fa fa-pencil"></i> edit</a>]</p>
       </header>
     )
   }
@@ -126,8 +164,12 @@ var CalibrateAction = React.createClass({
   },
 
   render: function() {
+    var state = store.getState();
+    var location = state.locations[state.active];
+    var label = ((location.state == 'idle') ? "calibrate" : "recalibrate");
+
     return (
-      <a href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> calibrate]</a>
+      <a href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> {label}]</a>
     );
   }
 })
@@ -138,7 +180,7 @@ var PrimaryActions = React.createClass({
     var location = state.locations[state.active];
 
     var onOff = (location.authorised ? <DeactivateAction /> : <ActivateAction />);
-    var calibrate = ((location.authorised && location.state == 'idle') ? <CalibrateAction /> : "");
+    var calibrate = ((location.authorised && (location.state == 'idle' || location.state == 'calibrated')) ? <CalibrateAction /> : "");
     var measure = ((location.authorised && location.state == 'calibrated') ? <MeasureAction /> : "");
 
     return (
@@ -156,7 +198,7 @@ var Location = React.createClass({
       return 'img/off-frame.gif';
     }
 
-    if (location.state == 'measuring') {
+    if (location.state == 'measuring' || location.state == 'calibrated') {
       return 'scouts/'+location.id+'/frame.jpg';
     } else if (location.state == 'calibrating') {
       return 'img/calibrating-frame.gif';
@@ -171,7 +213,8 @@ var Location = React.createClass({
 
     return (
       <div className="location">
-        <LocationLabel />
+        <div id="locationName"><LocationLabel /></div>
+
         <div id="location-details">
           <h3>0 VISITORS</h3>
           <img className="pure-img" alt='test' src={this.getFrameURL()}/>
@@ -235,7 +278,7 @@ var Application = React.createClass({
     var mainContent = ((state.locations.length) ? <Location /> : <Introduction />);
 
     return (
-      <div className="application pure-g">
+      <div className="pure-g">
         <div className="sidebar pure-u-1 pure-u-md-1-4">
           <div className="header">
             <h1 className="brand"><img className="pure-img" alt='Measure the Future logo' src='/img/logo.gif' /></h1>
@@ -253,7 +296,7 @@ var Application = React.createClass({
 function render() {
   ReactDOM.render(
     <Application />,
-    document.getElementById('body')
+    document.getElementById('application')
   );
 }
 

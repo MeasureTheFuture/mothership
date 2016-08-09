@@ -93,7 +93,7 @@ The following steps will configure an OSX machine as a development environment f
 * Tidy up responsive design.
 * ~~Use Location 1, Location 2, ..., Location N for automatically detected scouts.~~
 * ~~Have mothership notify scouts as required per interactions on the UI.~~
-* Need a placeholder for when in the calibrating state.
+* ~~Need a placeholder for when in the calibrating state.~~
 * Write tests for the frontend components.
 
 
