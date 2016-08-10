@@ -20,12 +20,12 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"github.com/MeasureTheFuture/mothership/configuration"
+	"github.com/MeasureTheFuture/mothership/controllers"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	_ "github.com/lib/pq"
 	"log"
-	"mothership/configuration"
-	"mothership/controllers"
 	"os"
 )
 

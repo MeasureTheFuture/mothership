@@ -21,9 +21,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
 	"io/ioutil"
-	"mothership/models"
 	"net/http"
 	"strconv"
 )

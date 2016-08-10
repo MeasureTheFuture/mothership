@@ -20,6 +20,8 @@ package controllers
 import (
 	"bytes"
 	"database/sql"
+	"github.com/MeasureTheFuture/mothership/configuration"
+	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	_ "github.com/lib/pq"
@@ -28,8 +30,6 @@ import (
 	"io"
 	"io/ioutil"
 	"mime/multipart"
-	"mothership/configuration"
-	"mothership/models"
 	"net/http"
 	"net/http/httptest"
 	"os"

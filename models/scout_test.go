@@ -19,10 +19,10 @@ package models
 
 import (
 	"database/sql"
+	"github.com/MeasureTheFuture/mothership/configuration"
 	_ "github.com/lib/pq"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"mothership/configuration"
 	"os"
 	"testing"
 )
