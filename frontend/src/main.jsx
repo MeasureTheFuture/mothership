@@ -271,6 +271,7 @@ var Application = React.createClass({
 
   componentDidMount: function() {
     this.loadFromServer();
+    setInterval(this.loadFromServer, 1000);
   },
 
   render: function() {

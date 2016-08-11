@@ -42,7 +42,7 @@ var (
 						"UUID":"59ef7180-f6b2-4129-99bf-970eb4312b4b",
 						"Version":"0.1",
 						"Health":{
-							"IpAddress":"10.1.1.1",
+							"IpAddress":"10.1.1.1:12",
 							"CPU":0.4,
 							"Memory":0.1,
 							"TotalMemory":1233312.0,
@@ -125,7 +125,7 @@ var _ = Describe("ScoutAPI controller", func() {
 		})
 
 		It("should update the calibration frame iff the scout is authorised", func() {
-			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1", true, "foo", "calibrating"}
+			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1", 8080, true, "foo", "calibrating"}
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 

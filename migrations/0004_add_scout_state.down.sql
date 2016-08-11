@@ -1,2 +1,2 @@
-ALTER TABLE scouts DROP COLUMN scout_state;
+ALTER TABLE scouts DROP COLUMN state;
 DROP TYPE scout_state;

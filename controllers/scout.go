@@ -101,10 +101,10 @@ func UpdateScout(db *sql.DB, c echo.Context) error {
 	}
 
 	if ns.State == models.CALIBRATING {
-		go http.Get("http://" + ns.IpAddress + "/calibrate")
+		go http.Get("http://" + ns.IpAddress + ":" + strconv.Itoa(int(ns.Port)) + "/calibrate")
 
 	} else if ns.State == models.MEASURING {
-		go http.Get("http://" + ns.IpAddress + "/measure/start")
+		go http.Get("http://" + ns.IpAddress + ":" + strconv.Itoa(int(ns.Port)) + "/measure/start")
 
 	}
 

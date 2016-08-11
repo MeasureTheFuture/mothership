@@ -51,16 +51,17 @@ type Scout struct {
 	Id         int64      `json:"id"`
 	UUID       string     `json:"uuid"`
 	IpAddress  string     `json:"ip_address"`
+	Port       int64      `json:"port"`
 	Authorised bool       `json:"authorised"`
 	Name       string     `json:"name"`
 	State      ScoutState `json:"state"`
 }
 
 func GetScoutById(db *sql.DB, id int64) (*Scout, error) {
-	const query = `SELECT uuid, ip_address, authorised, name, state
+	const query = `SELECT uuid, ip_address, port, authorised, name, state
 				   FROM scouts WHERE id = $1`
 	var result Scout
-	err := db.QueryRow(query, id).Scan(&result.UUID, &result.IpAddress, &result.Authorised,
+	err := db.QueryRow(query, id).Scan(&result.UUID, &result.IpAddress, &result.Port, &result.Authorised,
 		&result.Name, &result.State)
 	result.Id = id
 
@@ -68,10 +69,10 @@ func GetScoutById(db *sql.DB, id int64) (*Scout, error) {
 }
 
 func GetScoutByUUID(db *sql.DB, uuid string) (*Scout, error) {
-	const query = `SELECT id, ip_address, authorised, name, state
+	const query = `SELECT id, ip_address, port, authorised, name, state
 				   FROM scouts WHERE uuid = $1`
 	var result Scout
-	err := db.QueryRow(query, uuid).Scan(&result.Id, &result.IpAddress, &result.Authorised,
+	err := db.QueryRow(query, uuid).Scan(&result.Id, &result.IpAddress, &result.Port, &result.Authorised,
 		&result.Name, &result.State)
 	result.UUID = uuid
 
@@ -79,7 +80,7 @@ func GetScoutByUUID(db *sql.DB, uuid string) (*Scout, error) {
 }
 
 func GetAllScouts(db *sql.DB) ([]*Scout, error) {
-	const query = `SELECT id, uuid, ip_address, authorised, name, state FROM scouts`
+	const query = `SELECT id, uuid, ip_address, port, authorised, name, state FROM scouts`
 
 	var result []*Scout
 	rows, err := db.Query(query)
@@ -90,7 +91,7 @@ func GetAllScouts(db *sql.DB) ([]*Scout, error) {
 
 	for rows.Next() {
 		var s Scout
-		err = rows.Scan(&s.Id, &s.UUID, &s.IpAddress, &s.Authorised, &s.Name, &s.State)
+		err = rows.Scan(&s.Id, &s.UUID, &s.IpAddress, &s.Port, &s.Authorised, &s.Name, &s.State)
 		if err != nil {
 			return nil, err
 		}
@@ -124,14 +125,14 @@ func (s *Scout) GetCalibrationFrame(db *sql.DB) ([]byte, error) {
 }
 
 func (s *Scout) Insert(db *sql.DB) error {
-	const query = `INSERT INTO scouts (uuid, ip_address, authorised, name, state)
-				   VALUES ($1, $2, $3, $4, $5) RETURNING id`
-	return db.QueryRow(query, s.UUID, s.IpAddress, s.Authorised, s.Name, s.State).Scan(&s.Id)
+	const query = `INSERT INTO scouts (uuid, ip_address, port, authorised, name, state)
+				   VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
+	return db.QueryRow(query, s.UUID, s.IpAddress, s.Port, s.Authorised, s.Name, s.State).Scan(&s.Id)
 }
 
 func (s *Scout) Update(db *sql.DB) error {
-	const query = `UPDATE scouts SET uuid = $1, ip_address = $2, authorised = $3, name = $4,
-				   state = $5 WHERE id = $6`
-	_, err := db.Exec(query, s.UUID, s.IpAddress, s.Authorised, s.Name, s.State, s.Id)
+	const query = `UPDATE scouts SET uuid = $1, ip_address = $2, port = $3, authorised = $4, name = $5,
+				   state = $6 WHERE id = $7`
+	_, err := db.Exec(query, s.UUID, s.IpAddress, s.Port, s.Authorised, s.Name, s.State, s.Id)
 	return err
 }

@@ -60,7 +60,7 @@ var _ = Describe("Scout Model", func() {
 
 	Context("Insert", func() {
 		It("should insert a valid scout into the DB.", func() {
-			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo", "calibrated"}
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo", "calibrated"}
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
@@ -70,7 +70,7 @@ var _ = Describe("Scout Model", func() {
 		})
 
 		It("should return an error when an invalid scout is inserted into the DB.", func() {
-			s := Scout{-1, "aa", "192.168.0.1", true, "foo", "calibrating"}
+			s := Scout{-1, "aa", "192.168.0.1", 8080, true, "foo", "calibrating"}
 			err := s.Insert(db)
 			Ω(err).ShouldNot(BeNil())
 			Ω(s.Id).Should(Equal(int64(-1)))
@@ -82,7 +82,7 @@ var _ = Describe("Scout Model", func() {
 			s, err := GetScoutByUUID(db, "800fd548-2d2b-4185-885d-6323ccbe88a0")
 			Ω(err).ShouldNot(BeNil())
 
-			s2 := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo", "calibrated"}
+			s2 := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo", "calibrated"}
 			err = s2.Insert(db)
 			Ω(err).Should(BeNil())
 
@@ -98,7 +98,7 @@ var _ = Describe("Scout Model", func() {
 
 	Context("Update", func() {
 		It("should be able to update a scout in the DB", func() {
-			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", true, "foo", "measuring"}
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo", "measuring"}
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 

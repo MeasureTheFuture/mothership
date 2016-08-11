@@ -21,10 +21,12 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -44,7 +46,7 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 		}
 
 		// Scout doesn't exist, create it and mark it as un-authorized.
-		ns := models.Scout{-1, uuid, "0.0.0.0", false, "Location " + strconv.FormatInt(c+1, 10), "idle"}
+		ns := models.Scout{-1, uuid, "0.0.0.0", 8080, false, "Location " + strconv.FormatInt(c+1, 10), "idle"}
 		err = ns.Insert(db)
 		return nil, err
 	}
@@ -175,8 +177,26 @@ func ScoutHeartbeat(db *sql.DB, c echo.Context) error {
 		return err
 	}
 
+	add := strings.Split(hb.Health.IpAddress, ":")
+	if len(add) != 2 {
+		return errors.New("Invalid Ip Address.")
+	}
+
 	// Update IP address of scout.
-	s.IpAddress = hb.Health.IpAddress
+	s.IpAddress = "0.0.0.0"
+	if add[0] != "" {
+		s.IpAddress = add[0]
+	}
+
+	s.Port = 8080
+	if add[1] != "" {
+		i, err := strconv.Atoi(add[1])
+		if err != nil {
+			return err
+		}
+		s.Port = int64(i)
+	}
+
 	err = s.Update(db)
 	if err != nil {
 		return err
