@@ -48,7 +48,12 @@ func main() {
 		log.Fatalf("ERROR: Can't parse configuration - %s", err)
 	}
 
-	db, err := sql.Open("postgres", "user="+config.DBUserName+" dbname="+config.DBName)
+	connection := "user=" + config.DBUserName + " dbname=" + config.DBName
+	if config.DBPassword != "" {
+		connection = connection + " password=" + config.DBPassword
+	}
+
+	db, err := sql.Open("postgres", connection)
 	if err != nil {
 		log.Fatalf("ERROR: Can't open database - %s", err)
 	}
