@@ -5,6 +5,10 @@ Experimental software for powering the measure the future 'motherships'. These a
 ![alpha](https://img.shields.io/badge/stability-alpha-orange.svg?style=flat "Alpha")&nbsp;
  ![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat "GPLv3 License")
 
+## Copmilation/installation (Edison)
+
+Installation Instructions for Measure The Future can be found [here](https://github.com/MeasureTheFuture/installer).
+
 ## Compilation/installation (OSX)
 
 The following steps will configure an OSX machine as a development environment for the mothership:
