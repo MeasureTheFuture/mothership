@@ -199,7 +199,7 @@ var Location = React.createClass({
     }
 
     if (location.state == 'measuring' || location.state == 'calibrated') {
-      return 'scouts/'+location.id+'/frame.jpg';
+      return 'scouts/'+location.id+'/frame.jpg?d=' + new Date().getTime();
     } else if (location.state == 'calibrating') {
       return 'img/calibrating-frame.gif';
     }
