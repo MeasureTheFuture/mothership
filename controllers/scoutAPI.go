@@ -93,7 +93,38 @@ func ScoutCalibrated(db *sql.DB, c echo.Context) error {
 }
 
 func ScoutInteraction(db *sql.DB, c echo.Context) error {
-	return c.HTML(http.StatusNotFound, "")
+	s, err := isScoutAuthorised(db, c)
+	if err != nil {
+		return err
+	}
+	if s == nil {
+		return c.HTML(http.StatusNotFound, "")
+	}
+
+	data, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+
+	src, err := data.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	var i models.Interaction
+	err = json.NewDecoder(src).Decode(&i)
+	if err != nil {
+		return err
+	}
+
+	si := models.CreateScoutInteraction(&i)
+	err = si.Insert(db)
+	if err != nil {
+		return err
+	}
+
+	return c.HTML(http.StatusOK, "Interaction received")
 }
 
 func ScoutLog(db *sql.DB, c echo.Context) error {

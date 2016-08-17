@@ -45,7 +45,10 @@ var _ = Describe("Scout Model", func() {
 	})
 
 	cleaner := func() {
-		_, err := db.Exec(`DELETE FROM scout_logs`)
+		_, err := db.Exec(`DELETE FROM scout_interactions`)
+		Ω(err).Should(BeNil())
+
+		_, err = db.Exec(`DELETE FROM scout_logs`)
 		Ω(err).Should(BeNil())
 
 		_, err = db.Exec(`DELETE FROM scout_healths`)
