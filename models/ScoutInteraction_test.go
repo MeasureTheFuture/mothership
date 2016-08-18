@@ -61,13 +61,40 @@ var _ = Describe("Scout Interaction Model", func() {
 
 			t := time.Now().UTC()
 			et := t.Round(15 * time.Minute)
-			si := ScoutInteraction{s.Id, 0.2, [][2]int{[2]int{1, 2}, [2]int{5, 6}}, [][2]int{[2]int{3, 4}}, []float32{0.1}, false, t, et}
+			si := ScoutInteraction{s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, t, et}
 			err = si.Insert(db)
 			Ω(err).Should(BeNil())
 
 			si2, err := GetScoutInteractionById(db, s.Id, t)
 			Ω(err).Should(BeNil())
 			Ω(si2).Should(Equal(&si))
+		})
+	})
+
+	Context("Unprocessed", func() {
+		PIt("Should be able to get unproccessed interactions", func() {
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo", "idle"}
+			err := s.Insert(db)
+			Ω(err).Should(BeNil())
+
+			t := time.Now().UTC()
+			et := t.Round(15 * time.Minute)
+			si1 := ScoutInteraction{s.Id, 0.2, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, t, et}
+			err = si1.Insert(db)
+			Ω(err).Should(BeNil())
+
+			si2 := ScoutInteraction{s.Id, 0.3, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, t, et}
+			err = si2.Insert(db)
+			Ω(err).Should(BeNil())
+
+			si3 := ScoutInteraction{s.Id, 0.4, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, true, t, et}
+			err = si3.Insert(db)
+			Ω(err).Should(BeNil())
+
+			up, err := GetUnprocessed(db)
+			Ω(err).Should(BeNil())
+			Ω(up).Should(Equal([]*ScoutInteraction{&si1, &si2}))
+
 		})
 	})
 })

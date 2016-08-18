@@ -20,7 +20,7 @@ package processes
 import (
 	"database/sql"
 	"github.com/MeasureTheFuture/mothership/configuration"
-	"github.com/MeasureTheFuture/mothership/models"
+	//"github.com/MeasureTheFuture/mothership/models"
 	"log"
 	"time"
 )
@@ -30,7 +30,7 @@ func Summarise(db *sql.DB, c configuration.Configuration) {
 
 	for {
 		select {
-		case <-ticker:
+		case <-poll:
 			log.Printf("INFO: Generating summary of interaction data.")
 			updateUnprocessed(db)
 		}

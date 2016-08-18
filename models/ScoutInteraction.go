@@ -163,7 +163,8 @@ func CreateScoutInteraction(i *Interaction) ScoutInteraction {
 }
 
 func GetScoutInteractionById(db *sql.DB, scoutId int64, t time.Time) (*ScoutInteraction, error) {
-	const query = `SELECT duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at FROM scout_interactions WHERE scout_id = $1 AND created_at = $2`
+	const query = `SELECT duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at
+	FROM scout_interactions WHERE scout_id = $1 AND created_at = $2`
 
 	var result ScoutInteraction
 	var et time.Time
@@ -176,13 +177,40 @@ func GetScoutInteractionById(db *sql.DB, scoutId int64, t time.Time) (*ScoutInte
 }
 
 func GetLastScoutInteraction(db *sql.DB, scoutId int64) (*ScoutInteraction, error) {
-	const query = `SELECT duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at, created_at FROM scout_interactions WHERE scout_id = $1 ORDER BY created_at DESC LIMIT 1`
+	const query = `SELECT duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at,
+	created_at FROM scout_interactions WHERE scout_id = $1 ORDER BY created_at DESC LIMIT 1`
 
 	var result ScoutInteraction
-	err := db.QueryRow(query, scoutId).Scan(&result.Duration, &result.Waypoints, &result.WaypointWidths, &result.WaypointTimes, &result.Processed, &result.EnteredAt, &result.CreatedAt)
+	err := db.QueryRow(query, scoutId).Scan(&result.Duration, &result.Waypoints, &result.WaypointWidths,
+		&result.WaypointTimes, &result.Processed, &result.EnteredAt, &result.CreatedAt)
 	result.ScoutId = scoutId
 
 	return &result, err
+}
+
+func GetUnprocessed(db *sql.DB) ([]*ScoutInteraction, error) {
+	const query = `SELECT * FROM scout_interactions WHERE processed = false`
+	var result []*ScoutInteraction
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return result, err
+	}
+
+	for rows.Next() {
+		var si ScoutInteraction
+		var ct, et time.Time
+		err = rows.Scan(&si.ScoutId, &si.Duration, &si.Waypoints, &si.WaypointWidths,
+			&si.WaypointTimes, &si.Processed, &et, &ct)
+		si.CreatedAt = ct.UTC()
+		si.EnteredAt = et.UTC()
+		if err != nil {
+			return result, err
+		}
+		result = append(result, &si)
+	}
+
+	return result, rows.Err()
 }
 
 func NumScoutInteractions(db *sql.DB) (int64, error) {
