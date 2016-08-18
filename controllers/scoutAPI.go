@@ -119,6 +119,7 @@ func ScoutInteraction(db *sql.DB, c echo.Context) error {
 	}
 
 	si := models.CreateScoutInteraction(&i)
+	si.ScoutId = s.Id
 	err = si.Insert(db)
 	if err != nil {
 		return err

@@ -50,6 +50,28 @@ var (
 						}
 					}`
 
+	interactionJSON = `{
+							"UUID":"59ef7180-f6b2-4129-99bf-970eb4312b4b",
+							"Version":"0.1",
+							"Entered":"2015-03-00T11:00:00Z",
+							"Duration":2.3,
+							"Path":[
+								{
+									"XPixels":1,
+									"YPixels":2,
+									"HalfWidthPixels":3,
+									"HalfHeightPixels":4,
+									"T":0.5
+								},{
+									"XPixels":3,
+									"YPixels":4,
+									"HalfWidthPixels":5,
+									"HalfHeightPixels":6,
+									"T":1.5
+								}
+							]
+					}`
+
 	db  *sql.DB
 	err error
 )
@@ -94,7 +116,10 @@ var _ = Describe("ScoutAPI controller", func() {
 	})
 
 	cleaner := func() {
-		_, err := db.Exec(`DELETE FROM scout_logs`)
+		_, err := db.Exec(`DELETE FROM scout_interactions`)
+		Ω(err).Should(BeNil())
+
+		_, err = db.Exec(`DELETE FROM scout_logs`)
 		Ω(err).Should(BeNil())
 
 		_, err = db.Exec(`DELETE FROM scout_healths`)
@@ -166,6 +191,68 @@ var _ = Describe("ScoutAPI controller", func() {
 			frm, err := s2.GetCalibrationFrame(db)
 			Ω(err).Should(BeNil())
 			Ω(frm).Should(Equal(con))
+		})
+	})
+
+	Context("ScoutInteraction", func() {
+		It("should rop the request if no authentication is supplied", func() {
+			e := echo.New()
+			req, err := http.NewRequest(echo.POST, "/scout_api/interaction", strings.NewReader(interactionJSON))
+			Ω(err).Should(BeNil())
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = ScoutInteraction(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+
+			i, err := models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+		})
+
+		It("should create a new interaction iff the scout is authorised", func() {
+			e := echo.New()
+			req, err := buildPostRequest("interaction.json", "/scout_api/interaction", "59ef7180-f6b2-4129-99bf-970eb4312b4b", interactionJSON)
+			Ω(err).Should(BeNil())
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = ScoutInteraction(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusNotFound))
+			i, err := models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutInteractions(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(0)))
+
+			s, err := models.GetScoutByUUID(db, "59ef7180-f6b2-4129-99bf-970eb4312b4b")
+			Ω(err).Should(BeNil())
+			s.Authorised = true
+			err = s.Update(db)
+			Ω(err).Should(BeNil())
+
+			rec = httptest.NewRecorder()
+			c = e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			err = ScoutInteraction(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(http.StatusOK))
+			i, err = models.NumScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+			i, err = models.NumScoutInteractions(db)
+			Ω(err).Should(BeNil())
+			Ω(i).Should(Equal(int64(1)))
+
+			si, err := models.GetLastScoutInteraction(db, s.Id)
+			Ω(err).Should(BeNil())
+			Ω(si.Duration).Should(BeNumerically("==", float32(2.3)))
+			Ω(si.Waypoints).Should(Equal(models.Path{[2]int{1, 2}, [2]int{3, 4}}))
+			Ω(si.WaypointWidths).Should(Equal(models.Path{[2]int{3, 4}, [2]int{5, 6}}))
+			Ω(si.WaypointTimes).Should(Equal(models.RealArray{0.5, 1.5}))
+			Ω(si.Processed).Should(Equal(false))
 		})
 	})
 

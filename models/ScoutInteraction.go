@@ -175,6 +175,24 @@ func GetScoutInteractionById(db *sql.DB, scoutId int64, t time.Time) (*ScoutInte
 	return &result, err
 }
 
+func GetLastScoutInteraction(db *sql.DB, scoutId int64) (*ScoutInteraction, error) {
+	const query = `SELECT duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at, created_at FROM scout_interactions WHERE scout_id = $1 ORDER BY created_at DESC LIMIT 1`
+
+	var result ScoutInteraction
+	err := db.QueryRow(query, scoutId).Scan(&result.Duration, &result.Waypoints, &result.WaypointWidths, &result.WaypointTimes, &result.Processed, &result.EnteredAt, &result.CreatedAt)
+	result.ScoutId = scoutId
+
+	return &result, err
+}
+
+func NumScoutInteractions(db *sql.DB) (int64, error) {
+	const query = `SELECT COUNT(*) FROM scout_interactions`
+	var result int64
+	err := db.QueryRow(query).Scan(&result)
+
+	return result, err
+}
+
 func (si *ScoutInteraction) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_interactions (scout_id, duration, waypoints, waypoint_widths,
 		waypoint_times, processed, entered_at, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
