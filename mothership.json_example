@@ -3,5 +3,6 @@
 	"DBName":"mothership",
 	"DBTestName":"mothership_test",
 	"Address":":1323",
-	"StaticAssets":"public"
+	"StaticAssets":"public",
+	"SummariseInterval":1000
 }

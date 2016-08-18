@@ -23,16 +23,17 @@ import (
 )
 
 type Configuration struct {
-	DBUserName   string // The name of the user with read/write privileges on DBName
-	DBPassword   string // The password of the user with read/write privileges on DBName.
-	DBName       string // The name of the database that holds the production data.
-	DBTestName   string // The name of the database that holds testing data.
-	Address      string // The address and port that the mothership is accessible on.
-	StaticAssets string // The path to the static assets rendered by the mothership.
+	DBUserName        string // The name of the user with read/write privileges on DBName
+	DBPassword        string // The password of the user with read/write privileges on DBName.
+	DBName            string // The name of the database that holds the production data.
+	DBTestName        string // The name of the database that holds testing data.
+	Address           string // The address and port that the mothership is accessible on.
+	StaticAssets      string // The path to the static assets rendered by the mothership.
+	SummariseInterval int    // The number of milliseconds to wait between updating the interaction summaries.
 }
 
 func Parse(configFile string) (c Configuration, err error) {
-	c = Configuration{"mtf", "mothership", "", "mothership_test", ":80", "public"}
+	c = Configuration{"mtf", "mothership", "", "mothership_test", ":80", "public", 1000}
 
 	// Open the configuration file.
 	file, err := os.Open(configFile)

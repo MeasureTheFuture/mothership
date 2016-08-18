@@ -89,7 +89,7 @@ The following steps will configure an OSX machine as a development environment f
 * ~~ScoutHealth model: Get last Health.~~
 * ScoutHealth model: Get Health history summary.
 * ~~Implement update scout hook in controllers/scout~~
-* Implement scout interaction hook in controllers/scoutAPI
+* ~~Implement scout interaction hook in controllers/scoutAPI~~
 * ~~move database connection/webserver metadata to config file.~~
 * ~~Test successful calibrated called in scoutAPI.~~
 * ~~Prune/Tidy unused elements from main.css.~~
