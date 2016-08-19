@@ -96,22 +96,13 @@ Testing for the frontend:
 
 ## TODO
 
-* ~~Write Development/Setup instructions.~~
+* Implement summarise proccess - update scout summaries with unprocessed interaction data.
+* Add 'measure' button to the interface.
+* Add control endpoint for getting scout summary data for the interface.
+* Update the interface to display
 * ScoutHealth model: Prune/Delete. Reduce fidielity of data storage the older it becomes.
-* ~~ScoutHealth model: Get last Health.~~
-* ScoutHealth model: Get Health history summary.
-* ~~Implement update scout hook in controllers/scout~~
-* ~~Implement scout interaction hook in controllers/scoutAPI~~
-* ~~move database connection/webserver metadata to config file.~~
-* ~~Test successful calibrated called in scoutAPI.~~
-* ~~Prune/Tidy unused elements from main.css.~~
-* ~~Remove calibrationFrame from scout struct.~~
-* Tidy up responsive design.
-* ~~Use Location 1, Location 2, ..., Location N for automatically detected scouts.~~
-* ~~Have mothership notify scouts as required per interactions on the UI.~~
-* ~~Need a placeholder for when in the calibrating state.~~
 * Write tests for the frontend components.
-
+* Tidy up responsive design (for small screensizes)
 
 ## License
 
