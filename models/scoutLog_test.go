@@ -31,11 +31,7 @@ func TestScoutLog(t *testing.T) {
 }
 
 var _ = Describe("Scout Health Model", func() {
-	AfterEach(func() {
-		const query = `DELETE FROM scout_logs`
-		_, err := db.Exec(query)
-		Ω(err).Should(BeNil())
-	})
+	AfterEach(cleaner)
 
 	Context("Insert", func() {
 		It("should insert a valid scout_log into the DB.", func() {

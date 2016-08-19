@@ -32,8 +32,27 @@ func TestScout(t *testing.T) {
 	RunSpecs(t, "Scout Suite")
 }
 
-var db *sql.DB
-var err error
+var (
+	db  *sql.DB
+	err error
+)
+
+func cleaner() {
+	_, err := db.Exec(`DELETE FROM scout_summaries`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scout_interactions`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scout_logs`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scout_healths`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scouts`)
+	Ω(err).Should(BeNil())
+}
 
 var _ = Describe("Scout Model", func() {
 
@@ -43,20 +62,6 @@ var _ = Describe("Scout Model", func() {
 		db, err = sql.Open("postgres", "user="+config.DBUserName+" dbname="+config.DBTestName)
 		Ω(err).Should(BeNil())
 	})
-
-	cleaner := func() {
-		_, err := db.Exec(`DELETE FROM scout_interactions`)
-		Ω(err).Should(BeNil())
-
-		_, err = db.Exec(`DELETE FROM scout_logs`)
-		Ω(err).Should(BeNil())
-
-		_, err = db.Exec(`DELETE FROM scout_healths`)
-		Ω(err).Should(BeNil())
-
-		_, err = db.Exec(`DELETE FROM scouts`)
-		Ω(err).Should(BeNil())
-	}
 
 	AfterEach(cleaner)
 	AfterSuite(cleaner)

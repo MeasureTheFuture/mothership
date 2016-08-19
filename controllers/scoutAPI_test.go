@@ -19,8 +19,6 @@ package controllers
 
 import (
 	"bytes"
-	"database/sql"
-	"github.com/MeasureTheFuture/mothership/configuration"
 	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
@@ -71,9 +69,6 @@ var (
 								}
 							]
 					}`
-
-	db  *sql.DB
-	err error
 )
 
 func buildPostRequest(fileName string, url string, uuid string, content string) (*http.Request, error) {
@@ -108,29 +103,7 @@ func TestScoutAPI(t *testing.T) {
 
 var _ = Describe("ScoutAPI controller", func() {
 
-	BeforeSuite(func() {
-		config, err := configuration.Parse(os.Getenv("GOPATH") + "/mothership.json")
-		Ω(err).Should(BeNil())
-		db, err = sql.Open("postgres", "user="+config.DBUserName+" dbname="+config.DBTestName)
-		Ω(err).Should(BeNil())
-	})
-
-	cleaner := func() {
-		_, err := db.Exec(`DELETE FROM scout_interactions`)
-		Ω(err).Should(BeNil())
-
-		_, err = db.Exec(`DELETE FROM scout_logs`)
-		Ω(err).Should(BeNil())
-
-		_, err = db.Exec(`DELETE FROM scout_healths`)
-		Ω(err).Should(BeNil())
-
-		_, err = db.Exec(`DELETE FROM scouts`)
-		Ω(err).Should(BeNil())
-	}
-
 	AfterEach(cleaner)
-	AfterSuite(cleaner)
 
 	Context("ScoutCalibration", func() {
 		It("should drop the request if no authentication is supplied", func() {

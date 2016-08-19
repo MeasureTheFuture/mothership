@@ -82,6 +82,18 @@ The following steps will configure an OSX machine as a development environment f
 ```
 13. Visit localhost:1323 in your browser.
 
+## Testing
+
+Testing for the backend:
+```
+	$ go test -p 1 github.com/MeasureTheFuture/mothership/...
+```
+
+Testing for the frontend:
+```
+	$ npm run test
+```
+
 ## TODO
 
 * ~~Write Development/Setup instructions.~~

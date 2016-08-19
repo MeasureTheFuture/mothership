@@ -36,7 +36,7 @@ type ScoutSummary struct {
 
 func (b Buckets) Value() (driver.Value, error) {
 	res := "{"
-	for _, r := range b {
+	for i, r := range b {
 		res = res + "{"
 
 		for j, v := range r {
@@ -48,6 +48,9 @@ func (b Buckets) Value() (driver.Value, error) {
 		}
 
 		res = res + "}"
+		if i < len(r)-1 {
+			res = res + ","
+		}
 	}
 	res = res + "}"
 

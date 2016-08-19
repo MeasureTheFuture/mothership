@@ -19,7 +19,9 @@ package controllers
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
+	"github.com/MeasureTheFuture/mothership/configuration"
 	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
@@ -27,10 +29,33 @@ import (
 	. "github.com/onsi/gomega"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
 )
+
+var (
+	db  *sql.DB
+	err error
+)
+
+func cleaner() {
+	_, err := db.Exec(`DELETE FROM scout_summaries`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scout_interactions`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scout_logs`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scout_healths`)
+	Ω(err).Should(BeNil())
+
+	_, err = db.Exec(`DELETE FROM scouts`)
+	Ω(err).Should(BeNil())
+}
 
 func TestScout(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -38,18 +63,16 @@ func TestScout(t *testing.T) {
 }
 
 var _ = Describe("Scout controller", func() {
-	cleaner := func() {
-		_, err := db.Exec(`DELETE FROM scout_logs`)
-		Ω(err).Should(BeNil())
 
-		_, err = db.Exec(`DELETE FROM scout_healths`)
+	BeforeSuite(func() {
+		config, err := configuration.Parse(os.Getenv("GOPATH") + "/mothership.json")
 		Ω(err).Should(BeNil())
-
-		_, err = db.Exec(`DELETE FROM scouts`)
+		db, err = sql.Open("postgres", "user="+config.DBUserName+" dbname="+config.DBTestName)
 		Ω(err).Should(BeNil())
-	}
+	})
 
 	AfterEach(cleaner)
+	AfterSuite(cleaner)
 
 	Context("GetScouts", func() {
 		It("should return a list of all the attached scouts", func() {

@@ -18,42 +18,33 @@
 package models
 
 import (
-	_ "github.com/lib/pq"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"testing"
-	"time"
 )
 
-func TestScoutHealth(t *testing.T) {
+func TestScoutSummary(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Scout Health Suite")
+	RunSpecs(t, "Scout Summary Suite")
 }
 
-var _ = Describe("Scout Health Model", func() {
+var _ = Describe("Scout Summary Model", func() {
 	AfterEach(cleaner)
 
 	Context("Insert", func() {
-		It("should insert a valid scouthealth into the DB.", func() {
+		It("Should be able to insert a scout summary", func() {
 			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo", "idle"}
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
-			t := time.Now()
-			sh := ScoutHealth{s.Id, 0.1, 0.2, 0.3, 0.4, t}
-			err = sh.Insert(db)
+			ss := ScoutSummary{s.Id, 4, Buckets{}}
+			ss.VisitTimeBuckets[1][5] = 0.1
+			err = ss.Insert(db)
 			Ω(err).Should(BeNil())
 
-			sh2, err := GetScoutHealthById(db, s.Id, t)
+			ss2, err := GetScoutSummaryById(db, s.Id)
 			Ω(err).Should(BeNil())
-			Ω(&sh).Should(Equal(sh2))
-
-		})
-
-		It("should return an error when an invalid scout health is inserted into the DB.", func() {
-			sh := ScoutHealth{-1, 0.1, 0.2, 0.3, 0.4, time.Now()}
-			err := sh.Insert(db)
-			Ω(err).ShouldNot(BeNil())
+			Ω(ss2).Should(Equal(&ss))
 		})
 	})
 })

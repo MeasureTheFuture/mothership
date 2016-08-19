@@ -30,11 +30,7 @@ func TestScoutInteraction(t *testing.T) {
 }
 
 var _ = Describe("Scout Interaction Model", func() {
-	AfterEach(func() {
-		const query = `DELETE FROM scout_interactions`
-		_, err := db.Exec(query)
-		Ω(err).Should(BeNil())
-	})
+	AfterEach(cleaner)
 
 	Context("CreateScoutInteraction", func() {
 		It("Should be able to create a scout interaction", func() {
