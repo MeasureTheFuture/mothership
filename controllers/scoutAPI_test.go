@@ -123,7 +123,8 @@ var _ = Describe("ScoutAPI controller", func() {
 		})
 
 		It("should update the calibration frame iff the scout is authorised", func() {
-			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1", 8080, true, "foo", "calibrating"}
+			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1",
+				8080, true, "foo", "calibrating", &models.ScoutSummary{}}
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 

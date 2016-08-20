@@ -46,7 +46,7 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 		}
 
 		// Scout doesn't exist, create it and mark it as un-authorized.
-		ns := models.Scout{-1, uuid, "0.0.0.0", 8080, false, "Location " + strconv.FormatInt(c+1, 10), "idle"}
+		ns := models.Scout{-1, uuid, "0.0.0.0", 8080, false, "Location " + strconv.FormatInt(c+1, 10), "idle", &models.ScoutSummary{}}
 		err = ns.Insert(db)
 		return nil, err
 	}

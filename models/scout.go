@@ -48,13 +48,14 @@ func (s ScoutState) Value() (driver.Value, error) {
 }
 
 type Scout struct {
-	Id         int64      `json:"id"`
-	UUID       string     `json:"uuid"`
-	IpAddress  string     `json:"ip_address"`
-	Port       int64      `json:"port"`
-	Authorised bool       `json:"authorised"`
-	Name       string     `json:"name"`
-	State      ScoutState `json:"state"`
+	Id         int64         `json:"id"`
+	UUID       string        `json:"uuid"`
+	IpAddress  string        `json:"ip_address"`
+	Port       int64         `json:"port"`
+	Authorised bool          `json:"authorised"`
+	Name       string        `json:"name"`
+	State      ScoutState    `json:"state"`
+	Summary    *ScoutSummary `json:"summary"`
 }
 
 func GetScoutById(db *sql.DB, id int64) (*Scout, error) {
@@ -64,6 +65,10 @@ func GetScoutById(db *sql.DB, id int64) (*Scout, error) {
 	err := db.QueryRow(query, id).Scan(&result.UUID, &result.IpAddress, &result.Port, &result.Authorised,
 		&result.Name, &result.State)
 	result.Id = id
+	result.Summary, err = GetScoutSummaryById(db, result.Id)
+	if err != nil {
+		return &result, err
+	}
 
 	return &result, err
 }
@@ -75,6 +80,10 @@ func GetScoutByUUID(db *sql.DB, uuid string) (*Scout, error) {
 	err := db.QueryRow(query, uuid).Scan(&result.Id, &result.IpAddress, &result.Port, &result.Authorised,
 		&result.Name, &result.State)
 	result.UUID = uuid
+	result.Summary, err = GetScoutSummaryById(db, result.Id)
+	if err != nil {
+		return &result, err
+	}
 
 	return &result, err
 }
@@ -94,6 +103,10 @@ func GetAllScouts(db *sql.DB) ([]*Scout, error) {
 		err = rows.Scan(&s.Id, &s.UUID, &s.IpAddress, &s.Port, &s.Authorised, &s.Name, &s.State)
 		if err != nil {
 			return nil, err
+		}
+		s.Summary, err = GetScoutSummaryById(db, s.Id)
+		if err != nil {
+			return result, err
 		}
 
 		result = append(result, &s)
@@ -133,8 +146,8 @@ func (s *Scout) Insert(db *sql.DB) error {
 	}
 
 	// Create matching empty summary.
-	ss := ScoutSummary{s.Id, 0, Buckets{}}
-	return ss.Insert(db)
+	s.Summary = &ScoutSummary{s.Id, 0, Buckets{}}
+	return s.Summary.Insert(db)
 }
 
 func (s *Scout) Update(db *sql.DB) error {
