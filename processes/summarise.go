@@ -20,7 +20,7 @@ package processes
 import (
 	"database/sql"
 	"github.com/MeasureTheFuture/mothership/configuration"
-	//"github.com/MeasureTheFuture/mothership/models"
+	"github.com/MeasureTheFuture/mothership/models"
 	"log"
 	"time"
 )
@@ -38,5 +38,25 @@ func Summarise(db *sql.DB, c configuration.Configuration) {
 }
 
 func updateUnprocessed(db *sql.DB) {
+	up, err := models.GetUnprocessed(db)
+	if err != nil {
+		log.Printf("ERROR: Summarise unable to get unprocessed scout interactions.")
+		return
+	}
 
+	for _, si := range up {
+		err := models.IncrementVisitorCount(db, si.ScoutId)
+		if err != nil {
+			log.Printf("ERROR: Summarise unable to increment visitor count")
+			log.Print(err)
+			return
+		}
+
+		err = models.MarkProcessed(db, si.Id)
+		if err != nil {
+			log.Printf("ERROR: Summarise unable to make scout interaction as processed")
+			log.Print(err)
+			return
+		}
+	}
 }

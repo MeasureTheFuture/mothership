@@ -127,7 +127,14 @@ func (s *Scout) GetCalibrationFrame(db *sql.DB) ([]byte, error) {
 func (s *Scout) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scouts (uuid, ip_address, port, authorised, name, state)
 				   VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
-	return db.QueryRow(query, s.UUID, s.IpAddress, s.Port, s.Authorised, s.Name, s.State).Scan(&s.Id)
+	err := db.QueryRow(query, s.UUID, s.IpAddress, s.Port, s.Authorised, s.Name, s.State).Scan(&s.Id)
+	if err != nil {
+		return err
+	}
+
+	// Create matching empty summary.
+	ss := ScoutSummary{s.Id, 0, Buckets{}}
+	return ss.Insert(db)
 }
 
 func (s *Scout) Update(db *sql.DB) error {

@@ -96,13 +96,15 @@ Testing for the frontend:
 
 ## TODO
 
-* Implement summarise proccess - update scout summaries with unprocessed interaction data.
-* Add 'measure' button to the interface.
-* Add control endpoint for getting scout summary data for the interface.
-* Update the interface to display
-* ScoutHealth model: Prune/Delete. Reduce fidielity of data storage the older it becomes.
-* Write tests for the frontend components.
-* Tidy up responsive design (for small screensizes)
+- [x] Implement summarise proccess - update scout summaries with unprocessed interaction data.
+- [ ] Add control endpoint for getting scout summary data for the interface.
+- [ ] Add 'measure' button to the interface.
+- [ ] Update the interface to display
+- [ ] ScoutHealth model: Prune/Delete. Reduce fidielity of data storage the older it becomes.
+- [ ] Write tests for the frontend components.
+- [ ] Finish pending scout interaction tests.
+- [ ] Tidy up responsive design (for small screensizes)
+
 
 ## License
 
