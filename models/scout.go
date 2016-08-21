@@ -93,8 +93,10 @@ func GetAllScouts(db *sql.DB) ([]*Scout, error) {
 
 	var result []*Scout
 	rows, err := db.Query(query)
-	if err != nil {
-		return nil, err
+	if err == sql.ErrNoRows {
+		return result, nil
+	} else if err != nil {
+		return result, err
 	}
 	defer rows.Close()
 
@@ -102,7 +104,7 @@ func GetAllScouts(db *sql.DB) ([]*Scout, error) {
 		var s Scout
 		err = rows.Scan(&s.Id, &s.UUID, &s.IpAddress, &s.Port, &s.Authorised, &s.Name, &s.State)
 		if err != nil {
-			return nil, err
+			return result, err
 		}
 		s.Summary, err = GetScoutSummaryById(db, s.Id)
 		if err != nil {

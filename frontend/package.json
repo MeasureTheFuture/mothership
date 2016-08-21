@@ -4,8 +4,12 @@
   "description": "Front-end for the mothership application",
   "main": "main.jsx",
   "scripts": {
-    "build": "browserify -t [ reactify --es6 ] src/main.jsx -o ../public/bundle.js",
+    "build": "browserify src/main.jsx -o ../public/bundle.js",
     "test": "cross-env NODE_ENV=test mocha --recursive --compilers js:babel-register"
+  },
+  "browserify": {
+    "extension": ["jsx"],
+    "transform": [ [ "reactify", { "es6": true }]]
   },
   "repository": {
     "type": "git",

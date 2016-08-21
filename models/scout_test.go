@@ -86,7 +86,28 @@ var _ = Describe("Scout Model", func() {
 		})
 	})
 
-	Context("GetByUUID", func() {
+	Context("Get", func() {
+		It("should be able to get all scouts", func() {
+			al, err := GetAllScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(len(al)).Should(Equal(0))
+
+			s1 := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1",
+				8080, true, "foo", "calibrated", &ScoutSummary{}}
+			err = s1.Insert(db)
+			Ω(err).Should(BeNil())
+
+			s2 := Scout{-1, "801fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1",
+				8080, true, "foo", "calibrated", &ScoutSummary{}}
+			err = s2.Insert(db)
+			Ω(err).Should(BeNil())
+
+			al, err = GetAllScouts(db)
+			Ω(err).Should(BeNil())
+			Ω(len(al)).Should(Equal(2))
+			Ω(al).Should(Equal([]*Scout{&s1, &s2}))
+		})
+
 		It("should be able to get a scout by UUID", func() {
 			s, err := GetScoutByUUID(db, "800fd548-2d2b-4185-885d-6323ccbe88a0")
 			Ω(err).ShouldNot(BeNil())

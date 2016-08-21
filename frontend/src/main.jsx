@@ -17,24 +17,26 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Redux = require('redux');
+
 var reducers = require('./reducers');
-
 const store = Redux.createStore(reducers);
+var components = require('./components/index.jsx')
 
-function updateLocations(locations, id) {
-  var l = locations[id]
 
-  // Push the updated location to the backend.
-  var Httpreq = new XMLHttpRequest();
-  Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
-  Httpreq.send(JSON.stringify(l));
+// function updateLocations(locations, id) {
+//   var l = locations[id]
 
-  Httpreq.onreadystatechange = function() {
-    if (Httpreq.readyState == 4 && Httpreq.status == 200) {
-      store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
-    }
-  }
-}
+//   // Push the updated location to the backend.
+//   var Httpreq = new XMLHttpRequest();
+//   Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
+//   Httpreq.send(JSON.stringify(l));
+
+//   Httpreq.onreadystatechange = function() {
+//     if (Httpreq.readyState == 4 && Httpreq.status == 200) {
+//       store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
+//     }
+//   }
+// }
 
 var Introduction = React.createClass({
   render: function() {
@@ -98,6 +100,7 @@ var LocationLabel = React.createClass({
   }
 });
 
+/*
 var DeactivateAction = React.createClass({
   handleDeactivate: function() {
     var state = store.getState();
@@ -188,6 +191,7 @@ var PrimaryActions = React.createClass({
     );
   }
 })
+*/
 
 var Location = React.createClass({
   getFrameURL: function() {

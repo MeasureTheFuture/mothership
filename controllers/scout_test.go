@@ -75,6 +75,24 @@ var _ = Describe("Scout controller", func() {
 	AfterSuite(cleaner)
 
 	Context("GetScouts", func() {
+		It("shoudl not generate an error if their are no detected scouts", func() {
+			e := echo.New()
+			req, err := http.NewRequest(echo.GET, "/scouts", strings.NewReader(""))
+			Ω(err).Should(BeNil())
+			rec := httptest.NewRecorder()
+			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+
+			err = GetScouts(db, c)
+			Ω(err).Should(BeNil())
+			Ω(rec.Code).Should(Equal(200))
+
+			var sl []models.Scout
+			err = json.Unmarshal(rec.Body.Bytes(), &sl)
+			Ω(err).Should(BeNil())
+
+			Ω(len(sl)).Should(Equal(0))
+		})
+
 		It("should return a list of all the attached scouts", func() {
 			s := models.Scout{-1, "59ef7180-f6b2-4129-99bf-970eb4312b4b", "192.168.0.1",
 				8080, true, "foo", "calibrating", &models.ScoutSummary{}}
