@@ -30,6 +30,7 @@ function mothership(state, action) {
 
   switch (action.type) {
     case 'UPDATE_LOCATIONS':
+
       return {
         locations: action.locations,
         active: state.active

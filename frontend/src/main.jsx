@@ -14,29 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var React = require('react');
-var ReactDOM = require('react-dom');
-var Redux = require('redux');
+"use strict";
 
-var reducers = require('./reducers');
-const store = Redux.createStore(reducers);
-var components = require('./components/index.jsx')
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import mothership from './reducers/index.js'
+import PrimaryActions from './components/primaryActions.jsx';
 
+const s = createStore(mothership);
 
-// function updateLocations(locations, id) {
-//   var l = locations[id]
+function updateLocations(locations, id) {
+  var l = locations[id]
 
-//   // Push the updated location to the backend.
-//   var Httpreq = new XMLHttpRequest();
-//   Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
-//   Httpreq.send(JSON.stringify(l));
+  // Push the updated location to the backend.
+  var Httpreq = new XMLHttpRequest();
+  Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
+  Httpreq.send(JSON.stringify(l));
 
-//   Httpreq.onreadystatechange = function() {
-//     if (Httpreq.readyState == 4 && Httpreq.status == 200) {
-//       store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
-//     }
-//   }
-// }
+  Httpreq.onreadystatechange = function() {
+    if (Httpreq.readyState == 4 && Httpreq.status == 200) {
+      store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
+    }
+  }
+}
 
 var Introduction = React.createClass({
   render: function() {
@@ -50,6 +52,8 @@ var Introduction = React.createClass({
 
 var LocationEdit = React.createClass({
   handleSave: function() {
+    const { store } = this.context;
+
     var state = store.getState();
     var location = Object.assign({}, state.locations[state.active]);
 
@@ -66,6 +70,8 @@ var LocationEdit = React.createClass({
   },
 
   render: function() {
+    const { store } = this.context;
+
     var state = store.getState();
     var location = state.locations[state.active];
 
@@ -79,6 +85,9 @@ var LocationEdit = React.createClass({
     )
   }
 });
+LocationEdit.contextTypes = {
+  store: React.PropTypes.object
+}
 
 var LocationLabel = React.createClass({
   handleEdit: function() {
@@ -88,6 +97,8 @@ var LocationLabel = React.createClass({
   },
 
   render: function() {
+    const { store } = this.context;
+
     var state = store.getState();
     var location = state.locations[state.active];
 
@@ -99,102 +110,14 @@ var LocationLabel = React.createClass({
     )
   }
 });
-
-/*
-var DeactivateAction = React.createClass({
-  handleDeactivate: function() {
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.authorised = false;
-    state.locations[state.active] = location;
-
-    updateLocations(state.locations, state.active)
-  },
-
-  render: function() {
-    return (
-      <a href="#" className="warning" onClick={this.handleDeactivate}>[<i className="fa fa-power-off"></i> deactivate]</a>
-    )
-  }
-})
-
-var ActivateAction = React.createClass({
-  handleActivate: function() {
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.authorised = true;
-    state.locations[state.active] = location;
-
-    updateLocations(state.locations, state.active)
-  },
-
-  render: function() {
-    return (
-      <a href="#" onClick={this.handleActivate}>[<i className="fa fa-power-off"></i> activate]</a>
-    );
-  }
-})
-
-var MeasureAction = React.createClass({
-  handleMeasure: function() {
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.state = 'measuring';
-    state.locations[state.active] = location;
-
-    updateLocations(state.locations, state.active);
-  },
-
-  render: function() {
-    return (
-      <a href="#" onClick={this.handleMeasure}>[<i className="fa fa-line-chart"></i> measure]</a>
-    );
-  }
-})
-
-var CalibrateAction = React.createClass({
-  handleCalibrate: function() {
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.state = 'calibrating';
-    state.locations[state.active] = location;
-
-    updateLocations(state.locations, state.active);
-  },
-
-  render: function() {
-    var state = store.getState();
-    var location = state.locations[state.active];
-    var label = ((location.state == 'idle') ? "calibrate" : "recalibrate");
-
-    return (
-      <a href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> {label}]</a>
-    );
-  }
-})
-
-var PrimaryActions = React.createClass({
-  render: function() {
-    var state = store.getState();
-    var location = state.locations[state.active];
-
-    var onOff = (location.authorised ? <DeactivateAction /> : <ActivateAction />);
-    var calibrate = ((location.authorised && (location.state == 'idle' || location.state == 'calibrated')) ? <CalibrateAction /> : "");
-    var measure = ((location.authorised && location.state == 'calibrated') ? <MeasureAction /> : "");
-
-    return (
-      <p className="location-meta">{onOff} {calibrate} {measure}</p>
-    );
-  }
-})
-*/
+LocationLabel.contextTypes = {
+  store: React.PropTypes.object
+}
 
 var Location = React.createClass({
   getFrameURL: function() {
+    const { store } = this.context;
+
     var state = store.getState();
     var location = state.locations[state.active];
 
@@ -212,6 +135,8 @@ var Location = React.createClass({
   },
 
   render: function() {
+    const { store } = this.context;
+
     var state = store.getState();
     var location = state.locations[state.active];
 
@@ -222,12 +147,15 @@ var Location = React.createClass({
         <div id="location-details">
           <h3>0 VISITORS</h3>
           <img className="pure-img" alt='test' src={this.getFrameURL()}/>
-          <p className="location-meta"><PrimaryActions /></p>
+          <div className="location-meta"><PrimaryActions /></div>
         </div>
       </div>
     );
   }
 });
+Location.contextTypes = {
+  store: React.PropTypes.object
+};
 
 var NavItem = React.createClass({
   handleClick: function() {
@@ -261,6 +189,8 @@ var NavList = React.createClass({
 
 var Application = React.createClass({
   loadFromServer: function () {
+    const { store } = this.context;
+
     var Httpreq = new XMLHttpRequest();
     Httpreq.open("GET", "http://"+window.location.host+"/scouts", true);
     Httpreq.send(null);
@@ -279,6 +209,8 @@ var Application = React.createClass({
   },
 
   render: function() {
+    const { store } = this.context;
+
     var state = store.getState();
     var mainContent = ((state.locations.length) ? <Location /> : <Introduction />);
 
@@ -297,13 +229,18 @@ var Application = React.createClass({
     )
   }
 })
+Application.contextTypes = {
+  store: React.PropTypes.object
+};
 
 function render() {
   ReactDOM.render(
-    <Application />,
+    <Provider store={s}>
+      <Application />
+    </Provider>,
     document.getElementById('application')
   );
 }
 
 render();
-store.subscribe(render)
+s.subscribe(render)
