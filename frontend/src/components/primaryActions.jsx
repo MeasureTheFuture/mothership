@@ -15,34 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 "use strict;"
-var React = require('react');
 
-function updateLocations(store, locations, id) {
-  var l = locations[id]
-
-  // Push the updated location to the backend.
-  var Httpreq = new XMLHttpRequest();
-  Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
-  Httpreq.send(JSON.stringify(l));
-
-  Httpreq.onreadystatechange = function() {
-    if (Httpreq.readyState == 4 && Httpreq.status == 200) {
-      store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
-    }
-  }
-}
+import React from 'react';
+import reducers from '../reducers/index.js'
 
 var DeactivateAction = React.createClass({
   handleDeactivate: function() {
-  	const { store } = this.context;
-
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.authorised = false;
-    state.locations[state.active] = location;
-
-    updateLocations(store, state.locations, state.active)
+    const { store } = this.context;
+    reducers.UpdateActiveLocation(store, "authorised", false);
   },
 
   render: function() {
@@ -52,20 +32,13 @@ var DeactivateAction = React.createClass({
   }
 });
 DeactivateAction.contextTypes = {
-	store: React.PropTypes.object
+  store: React.PropTypes.object
 };
 
 var ActivateAction = React.createClass({
   handleActivate: function() {
-  	const { store } = this.context;
-
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.authorised = true;
-    state.locations[state.active] = location;
-
-    updateLocations(store, state.locations, state.active)
+    const { store } = this.context;
+    reducers.UpdateActiveLocation(store, "authorised", true);
   },
 
   render: function() {
@@ -75,20 +48,13 @@ var ActivateAction = React.createClass({
   }
 });
 ActivateAction.contextTypes = {
-	store: React.PropTypes.object
+  store: React.PropTypes.object
 };
 
 var MeasureAction = React.createClass({
   handleMeasure: function() {
-  	const { store } = this.context;
-
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.state = 'measuring';
-    state.locations[state.active] = location;
-
-    updateLocations(store, state.locations, state.active);
+    const { store } = this.context;
+    reducers.UpdateActiveLocation(store, "state", 'measuring');
   },
 
   render: function() {
@@ -98,24 +64,17 @@ var MeasureAction = React.createClass({
   }
 });
 MeasureAction.contextTypes = {
-	store: React.PropTypes.object
+  store: React.PropTypes.object
 };
 
 var CalibrateAction = React.createClass({
   handleCalibrate: function() {
-  	const { store } = this.context;
-
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.state = 'calibrating';
-    state.locations[state.active] = location;
-
-    updateLocations(store, state.locations, state.active);
+    const { store } = this.context;
+    reducers.UpdateActiveLocation(store, "state", 'calibrating');
   },
 
   render: function() {
-  	const { store } = this.context;
+    const { store } = this.context;
 
     var state = store.getState();
     var location = state.locations[state.active];
@@ -127,12 +86,12 @@ var CalibrateAction = React.createClass({
   }
 });
 CalibrateAction.contextTypes = {
-	store: React.PropTypes.object
+  store: React.PropTypes.object
 };
 
 export default class PrimaryActions extends React.Component {
   render() {
-  	const { store } = this.context;
+    const { store } = this.context;
 
     var state = store.getState();
     var location = state.locations[state.active];
@@ -147,5 +106,5 @@ export default class PrimaryActions extends React.Component {
   }
 }
 PrimaryActions.contextTypes = {
-	store: React.PropTypes.object
+  store: React.PropTypes.object
 };

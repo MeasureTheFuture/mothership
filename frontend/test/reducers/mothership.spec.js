@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var expect = require('expect')
-var mothership = require('../../src/reducers')
+var reducers = require('../../src/reducers')
 var locations = [{ "id":1,
                    "uuid":"800fd548-2d2b-4185-885d-6323ccbe88a0",
                    "ip_address":"192.168.0.1",
@@ -33,13 +33,13 @@ describe('reducers', () => {
   describe('mothership', () => {
     it('should provide the initial state', () => {
       expect(
-        mothership(undefined, {})
+        reducers.Mothership(undefined, {})
       ).toEqual({locations:[], active:0})
     })
 
     it('should handle update locations', () => {
       expect(
-        mothership({locations:[], active:0}, {
+        reducers.Mothership({locations:[], active:0}, {
           type:'UPDATE_LOCATIONS',
           locations:locations})
       ).toEqual({
@@ -50,7 +50,7 @@ describe('reducers', () => {
 
     it('should not allow a negative active index', () => {
       expect(
-        mothership({locations:locations, active:0}, {
+        reducers.Mothership({locations:locations, active:0}, {
           type:'SET_ACTIVE',
           active: -1
         })
@@ -62,7 +62,7 @@ describe('reducers', () => {
 
     it('should not allow an index larger than length of locations', () => {
       expect(
-        mothership({locations:locations, active: 0}, {
+        reducers.Mothership({locations:locations, active: 0}, {
           type:'SET_ACTIVE',
           active: 3
         })
@@ -74,7 +74,7 @@ describe('reducers', () => {
 
     it('should set a valid index between 0 and the upper range', () => {
       expect(
-        mothership({locations:locations, active:0}, {
+        reducers.Mothership({locations:locations, active:0}, {
           type:'SET_ACTIVE',
           active: 1
         })

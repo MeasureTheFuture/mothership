@@ -19,18 +19,44 @@ const initialState = {
   active:0
 }
 
-function selectLocation(value, l) {
-  return value.id == l.id;
+function GetLocations(store) {
+    var httpreq = new XMLHttpRequest();
+    httpreq.open("GET", "http://"+window.location.host+"/scouts", true);
+    httpreq.send(null);
+    httpreq.onreadystatechange = function() {
+      if (httpreq.readyState == 4 && httpreq.status == 200) {
+        var locations = JSON.parse(httpreq.responseText)
+        store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
+      }
+    }
 }
 
-function mothership(state, action) {
+function UpdateActiveLocation(store, field, value) {
+  var state = store.getState();
+
+  var l = Object.assign({}, state.locations[state.active]);
+  Reflect.set(l, field, value);
+  state.locations[state.active] = l;
+
+  // Push the active location to the backend.
+  var httpreq = new XMLHttpRequest();
+  httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
+  httpreq.send(JSON.stringify(l));
+  httpreq.onreadystatechange = function() {
+    if (httpreq.readyState == 4 && httpreq.status == 200) {
+      store.dispatch({ type:'UPDATE_LOCATIONS', locations:state.locations})
+    }
+  }
+}
+
+function Mothership(state, action) {
   if (state === undefined) {
     return initialState;
   }
 
   switch (action.type) {
     case 'UPDATE_LOCATIONS':
-
+      console.log("update");
       return {
         locations: action.locations,
         active: state.active
@@ -47,4 +73,8 @@ function mothership(state, action) {
   }
 }
 
-module.exports = mothership
+module.exports = {
+  Mothership,
+  GetLocations,
+  UpdateActiveLocation
+}

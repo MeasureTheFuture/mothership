@@ -20,25 +20,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import mothership from './reducers/index.js'
+import reducers from './reducers/index.js'
 import PrimaryActions from './components/primaryActions.jsx';
 
-const s = createStore(mothership);
-
-function updateLocations(locations, id) {
-  var l = locations[id]
-
-  // Push the updated location to the backend.
-  var Httpreq = new XMLHttpRequest();
-  Httpreq.open("PUT", "http://"+window.location.host+"/scouts/"+l.id, true);
-  Httpreq.send(JSON.stringify(l));
-
-  Httpreq.onreadystatechange = function() {
-    if (Httpreq.readyState == 4 && Httpreq.status == 200) {
-      store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
-    }
-  }
-}
+const s = createStore(reducers.Mothership);
 
 var Introduction = React.createClass({
   render: function() {
@@ -51,24 +36,6 @@ var Introduction = React.createClass({
 })
 
 var LocationEdit = React.createClass({
-  handleSave: function() {
-    const { store } = this.context;
-
-    var state = store.getState();
-    var location = Object.assign({}, state.locations[state.active]);
-
-    location.name = document.getElementById('locationInput').value;
-    console.log("saving: " + location.name);
-    state.locations[state.active] = location;
-
-    updateLocations(state.locations, state.active);
-
-    ReactDOM.render(
-      <LocationLabel />,
-      document.getElementById('locationName')
-    )
-  },
-
   render: function() {
     const { store } = this.context;
 
@@ -79,7 +46,7 @@ var LocationEdit = React.createClass({
       <header className="locationLabel">
         <form className="pure-form">
           <h2 className="location-title"><input id="locationInput" className="location-title" type="text" placeholder={location.name} /></h2>
-          <p className="location-meta"><a href="#" onClick={this.handleSave}>[<i className="fa fa-save"></i> save</a>]</p>
+          <p className="location-meta"><a href="#" onClick={this.props.callBack}>[<i className="fa fa-save"></i> save</a>]</p>
         </form>
       </header>
     )
@@ -90,12 +57,6 @@ LocationEdit.contextTypes = {
 }
 
 var LocationLabel = React.createClass({
-  handleEdit: function() {
-    ReactDOM.render(
-      <LocationEdit />,
-      document.getElementById('locationName'))
-  },
-
   render: function() {
     const { store } = this.context;
 
@@ -105,7 +66,7 @@ var LocationLabel = React.createClass({
     return (
       <header className="locationLabel">
           <h2 className="location-title">{location.name}</h2>
-          <p className="location-meta"><a href="#" onClick={this.handleEdit}>[<i className="fa fa-pencil"></i> edit</a>]</p>
+          <p className="location-meta"><a href="#" onClick={this.props.callBack}>[<i className="fa fa-pencil"></i> edit</a>]</p>
       </header>
     )
   }
@@ -115,6 +76,24 @@ LocationLabel.contextTypes = {
 }
 
 var Location = React.createClass({
+  getInitialState: function() {
+    return {locationEdit: false};
+  },
+
+  saveCallBack: function() {
+    const { store } = this.context;
+    reducers.UpdateActiveLocation(store, "name", document.getElementById('locationInput').value);
+    this.setState({locationEdit: false})
+    render();
+  },
+
+  editCallBack: function() {
+    console.log("EDIT: ");
+
+    this.setState({locationEdit: true});
+    render();
+  },
+
   getFrameURL: function() {
     const { store } = this.context;
 
@@ -136,13 +115,14 @@ var Location = React.createClass({
 
   render: function() {
     const { store } = this.context;
-
     var state = store.getState();
     var location = state.locations[state.active];
 
+    var locationName = (this.state.locationEdit ? <LocationEdit callBack={this.saveCallBack} /> : <LocationLabel callBack={this.editCallBack} /> )
+
     return (
       <div className="location">
-        <div id="locationName"><LocationLabel /></div>
+        <div id="locationName">{ locationName }</div>
 
         <div id="location-details">
           <h3>0 VISITORS</h3>
@@ -190,17 +170,7 @@ var NavList = React.createClass({
 var Application = React.createClass({
   loadFromServer: function () {
     const { store } = this.context;
-
-    var Httpreq = new XMLHttpRequest();
-    Httpreq.open("GET", "http://"+window.location.host+"/scouts", true);
-    Httpreq.send(null);
-
-    Httpreq.onreadystatechange = function() {
-      if (Httpreq.readyState == 4 && Httpreq.status == 200) {
-        var locations = JSON.parse(Httpreq.responseText)
-        store.dispatch({ type:'UPDATE_LOCATIONS', locations:locations})
-      }
-    }.bind(this);
+    reducers.GetLocations(store);
   },
 
   componentDidMount: function() {
