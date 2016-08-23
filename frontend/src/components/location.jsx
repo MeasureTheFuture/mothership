@@ -17,20 +17,17 @@
 "use strict;"
 
 import React from 'react';
-import reducers from '../reducers/index.js'
+import { UpdateActiveLocation, ActiveLocation } from '../reducers/index.js'
 import PrimaryActions from './primaryActions.jsx';
 
 var LocationEdit = React.createClass({
   render: function() {
     const { store } = this.context;
 
-    var state = store.getState();
-    var location = state.locations[state.active];
-
     return (
       <header className="locationLabel">
         <form className="pure-form">
-          <h2 className="location-title"><input id="locationInput" className="location-title" type="text" placeholder={location.name} /></h2>
+          <h2 className="location-title"><input id="locationInput" className="location-title" type="text" placeholder={ActiveLocation(store).name} /></h2>
           <p className="location-meta"><a href="#" onClick={this.props.callBack}>[<i className="fa fa-save"></i> save</a>]</p>
         </form>
       </header>
@@ -45,12 +42,9 @@ var LocationLabel = React.createClass({
   render: function() {
     const { store } = this.context;
 
-    var state = store.getState();
-    var location = state.locations[state.active];
-
     return (
       <header className="locationLabel">
-          <h2 className="location-title">{location.name}</h2>
+          <h2 className="location-title">{ActiveLocation(store).name}</h2>
           <p className="location-meta"><a href="#" onClick={this.props.callBack}>[<i className="fa fa-pencil"></i> edit</a>]</p>
       </header>
     )
@@ -67,7 +61,7 @@ Location = React.createClass({
 
   saveCallBack: function() {
     const { store } = this.context;
-    reducers.UpdateActiveLocation(store, "name", document.getElementById('locationInput').value);
+    UpdateActiveLocation(store, "name", document.getElementById('locationInput').value);
     this.setState({locationEdit: false})
     this.render();
   },
@@ -80,16 +74,13 @@ Location = React.createClass({
   getFrameURL: function() {
     const { store } = this.context;
 
-    var state = store.getState();
-    var location = state.locations[state.active];
-
-    if (!location.authorised) {
+    if (!ActiveLocation(store).authorised) {
       return 'img/off-frame.gif';
     }
 
-    if (location.state == 'measuring' || location.state == 'calibrated') {
-      return 'scouts/'+location.id+'/frame.jpg?d=' + new Date().getTime();
-    } else if (location.state == 'calibrating') {
+    if (ActiveLocation(store).state == 'measuring' || ActiveLocation(store).state == 'calibrated') {
+      return 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();
+    } else if (ActiveLocation(store).state == 'calibrating') {
       return 'img/calibrating-frame.gif';
     }
 
@@ -98,9 +89,6 @@ Location = React.createClass({
 
   render: function() {
     const { store } = this.context;
-    var state = store.getState();
-    var location = state.locations[state.active];
-
     var locationName = (this.state.locationEdit ? <LocationEdit callBack={this.saveCallBack} /> : <LocationLabel callBack={this.editCallBack} /> )
 
     return (
@@ -108,7 +96,7 @@ Location = React.createClass({
         <div id="locationName">{ locationName }</div>
 
         <div id="location-details">
-          <h3>0 VISITORS</h3>
+          <h3>{ ActiveLocation(store).summary.VisitorCount } VISITORS</h3>
           <img className="pure-img" alt='test' src={this.getFrameURL()}/>
           <div className="location-meta"><PrimaryActions /></div>
         </div>

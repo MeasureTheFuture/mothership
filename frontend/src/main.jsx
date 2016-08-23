@@ -20,10 +20,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducers from './reducers/index.js'
+import { Mothership } from './reducers/index.js';
 import Application from './components/application.jsx';
 
-const s = createStore(reducers.Mothership);
+const s = createStore(Mothership);
 
 function render() {
   ReactDOM.render(

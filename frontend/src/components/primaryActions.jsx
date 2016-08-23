@@ -17,12 +17,12 @@
 "use strict;"
 
 import React from 'react';
-import reducers from '../reducers/index.js'
+import { UpdateActiveLocation, ActiveLocation } from '../reducers/index.js'
 
 var DeactivateAction = React.createClass({
   handleDeactivate: function() {
     const { store } = this.context;
-    reducers.UpdateActiveLocation(store, "authorised", false);
+    UpdateActiveLocation(store, "authorised", false);
   },
 
   render: function() {
@@ -38,7 +38,7 @@ DeactivateAction.contextTypes = {
 var ActivateAction = React.createClass({
   handleActivate: function() {
     const { store } = this.context;
-    reducers.UpdateActiveLocation(store, "authorised", true);
+    UpdateActiveLocation(store, "authorised", true);
   },
 
   render: function() {
@@ -54,7 +54,7 @@ ActivateAction.contextTypes = {
 var MeasureAction = React.createClass({
   handleMeasure: function() {
     const { store } = this.context;
-    reducers.UpdateActiveLocation(store, "state", 'measuring');
+    UpdateActiveLocation(store, "state", 'measuring');
   },
 
   render: function() {
@@ -70,15 +70,12 @@ MeasureAction.contextTypes = {
 var CalibrateAction = React.createClass({
   handleCalibrate: function() {
     const { store } = this.context;
-    reducers.UpdateActiveLocation(store, "state", 'calibrating');
+    UpdateActiveLocation(store, "state", 'calibrating');
   },
 
   render: function() {
     const { store } = this.context;
-
-    var state = store.getState();
-    var location = state.locations[state.active];
-    var label = ((location.state == 'idle') ? "calibrate" : "recalibrate");
+    var label = ((ActiveLocation(store).state == 'idle') ? "calibrate" : "recalibrate");
 
     return (
       <a href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> {label}]</a>
@@ -92,13 +89,9 @@ CalibrateAction.contextTypes = {
 var PrimaryActions = React.createClass({
   render: function() {
     const { store } = this.context;
-
-    var state = store.getState();
-    var location = state.locations[state.active];
-
-    var onOff = (location.authorised ? <DeactivateAction /> : <ActivateAction />);
-    var calibrate = ((location.authorised && (location.state == 'idle' || location.state == 'calibrated')) ? <CalibrateAction /> : "");
-    var measure = ((location.authorised && location.state == 'calibrated') ? <MeasureAction /> : "");
+    var onOff = (ActiveLocation(store).authorised ? <DeactivateAction /> : <ActivateAction />);
+    var calibrate = ((ActiveLocation(store).authorised && (ActiveLocation(store).state == 'idle' || ActiveLocation(store).state == 'calibrated')) ? <CalibrateAction /> : "");
+    var measure = ((ActiveLocation(store).authorised && ActiveLocation(store).state == 'calibrated') ? <MeasureAction /> : "");
 
     return (
       <div className="location-meta">{onOff} {calibrate} {measure}</div>

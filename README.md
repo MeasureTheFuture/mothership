@@ -99,7 +99,7 @@ Testing for the frontend:
 - [x] Implement summarise proccess - update scout summaries with unprocessed interaction data.
 - [x] Add control endpoint for getting scout summary data for the interface.
 - [x] Add 'measure' button to the interface.
-- [ ] Update the interface to display visitor count from backend.
+- [x] Update the interface to display visitor count from backend.
 - [x] Mothership generates internal server error (500) when no scouts are present.
 - [ ] Write tests for the frontend components.
 - [ ] Finish pending scout interaction tests.

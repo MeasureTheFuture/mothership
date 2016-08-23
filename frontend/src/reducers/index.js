@@ -14,12 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+"use strict;"
+
 const initialState = {
   locations:[],
   active:0
 }
 
-function GetLocations(store) {
+export function ActiveLocation(store) {
+  var state = store.getState();
+  return state.locations[state.active];
+}
+
+export function GetLocations(store) {
     var httpreq = new XMLHttpRequest();
     httpreq.open("GET", "http://"+window.location.host+"/scouts", true);
     httpreq.send(null);
@@ -31,7 +38,7 @@ function GetLocations(store) {
     }
 }
 
-function UpdateActiveLocation(store, field, value) {
+export function UpdateActiveLocation(store, field, value) {
   var state = store.getState();
 
   var l = Object.assign({}, state.locations[state.active]);
@@ -49,7 +56,7 @@ function UpdateActiveLocation(store, field, value) {
   }
 }
 
-function Mothership(state, action) {
+export function Mothership(state, action) {
   if (state === undefined) {
     return initialState;
   }
@@ -73,8 +80,11 @@ function Mothership(state, action) {
   }
 }
 
-module.exports = {
-  Mothership,
-  GetLocations,
-  UpdateActiveLocation
-}
+export { Mothership, GetLocations, ActiveLocation, UpdateActiveLocation }
+
+// module.exports = {
+//   Mothership,
+//   GetLocations,
+//   UpdateActiveLocation,
+//   ActiveLocation
+// }

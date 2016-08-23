@@ -17,7 +17,7 @@
 "use strict";
 
 import React from 'react';
-import reducers from '../reducers/index.js'
+import { GetLocations } from '../reducers/index.js'
 import Location from './location.jsx';
 import Introduction from './documentation.jsx';
 
@@ -54,7 +54,7 @@ var NavList = React.createClass({
 var Application = React.createClass({
   loadFromServer: function () {
     const { store } = this.context;
-    reducers.GetLocations(store);
+    GetLocations(store);
   },
 
   componentDidMount: function() {

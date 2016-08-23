@@ -17,7 +17,6 @@
 "use strict";
 
 import React from 'react';
-import reducers from '../reducers/index.js'
 
 var Introduction = React.createClass({
   render: function() {
