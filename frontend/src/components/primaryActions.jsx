@@ -89,8 +89,8 @@ CalibrateAction.contextTypes = {
   store: React.PropTypes.object
 };
 
-export default class PrimaryActions extends React.Component {
-  render() {
+var PrimaryActions = React.createClass({
+  render: function() {
     const { store } = this.context;
 
     var state = store.getState();
@@ -104,7 +104,9 @@ export default class PrimaryActions extends React.Component {
       <div className="location-meta">{onOff} {calibrate} {measure}</div>
     );
   }
-}
+});
 PrimaryActions.contextTypes = {
   store: React.PropTypes.object
 };
+
+export default PrimaryActions;

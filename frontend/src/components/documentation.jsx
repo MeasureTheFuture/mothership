@@ -17,22 +17,16 @@
 "use strict";
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import reducers from './reducers/index.js'
-import Application from './components/application.jsx';
+import reducers from '../reducers/index.js'
 
-const s = createStore(reducers.Mothership);
+var Introduction = React.createClass({
+  render: function() {
+    return (
+      <div className="introduction">
+        <p>Placeholder for introduction text / documentation and a GIF for how to plugin and setup a scout.</p>
+      </div>
+    )
+  }
+})
 
-function render() {
-  ReactDOM.render(
-    <Provider store={s}>
-      <Application />
-    </Provider>,
-    document.getElementById('application')
-  );
-}
-
-render();
-s.subscribe(render)
+export default Introduction;
