@@ -101,10 +101,15 @@ Testing for the frontend:
 - [x] Add 'measure' button to the interface.
 - [x] Update the interface to display visitor count from backend.
 - [x] Mothership generates internal server error (500) when no scouts are present.
-- [ ] Write tests for the frontend components.
-- [ ] Finish pending scout interaction tests.
+- [ ] Ability to stop mothership from the UI
+- [ ] Better identification that the UI is in measuring mode / working
+- [ ] Heatmap rendering
+- [ ] Heatmap number crunching
+- [ ] An easier way to tweak the OpenCV settings for best results
+- [ ] Write tests for the frontend components
+- [ ] Finish pending scout interaction tests
 - [ ] Tidy up responsive design (for small screensizes)
-- [ ] ScoutHealth model: Prune/Delete. Reduce fidielity of data storage the older it becomes.
+- [ ] ScoutHealth model: Prune/Delete. Reduce fidielity of data storage the older it becomes
 
 
 ## License

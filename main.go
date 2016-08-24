@@ -22,6 +22,7 @@ import (
 	"flag"
 	"github.com/MeasureTheFuture/mothership/configuration"
 	"github.com/MeasureTheFuture/mothership/controllers"
+	"github.com/MeasureTheFuture/mothership/processes"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	_ "github.com/lib/pq"
@@ -58,6 +59,9 @@ func main() {
 		log.Fatalf("ERROR: Can't open database - %s", err)
 	}
 	defer db.Close()
+
+	// Start background proccesses.
+	go processes.Summarise(db, config)
 
 	e := echo.New()
 	e.Static("/", config.StaticAssets)

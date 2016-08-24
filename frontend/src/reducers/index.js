@@ -81,10 +81,3 @@ export function Mothership(state, action) {
 }
 
 export { Mothership, GetLocations, ActiveLocation, UpdateActiveLocation }
-
-// module.exports = {
-//   Mothership,
-//   GetLocations,
-//   UpdateActiveLocation,
-//   ActiveLocation
-// }
