@@ -17,4 +17,12 @@
 
 package vec
 
+import (
+	"math"
+)
+
 type Vec [2]int
+
+func (v *Vec) length() float64 {
+	return math.Sqrt(float64((v[0] * v[0]) + (v[1] * v[1])))
+}

@@ -74,6 +74,8 @@ var _ = Describe("Shaft", func() {
 			b2 := &AABB{Vec{0, 6}, Vec{2, 10}}
 			Ω(s.Intersects(b2)).Should(BeTrue())
 			Ω(s2.Intersects(b2)).Should(BeTrue())
+
+			// TODO: More intersects tests.
 		})
 
 		It("Should return false when an AABB doesn't intersect a shaft", func() {
@@ -89,6 +91,8 @@ var _ = Describe("Shaft", func() {
 			b2 := &AABB{Vec{0, 8}, Vec{1, 10}}
 			Ω(s.Intersects(b2)).Should(BeFalse())
 			Ω(s2.Intersects(b2)).Should(BeFalse())
+
+			// TODO: More intersects tests.
 		})
 	})
 

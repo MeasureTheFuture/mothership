@@ -63,12 +63,21 @@ func updateUnprocessed(db *sql.DB) {
 }
 
 const (
-	FrameW = 1024
-	FrameH = 720
+	FrameW   = 1024
+	FrameH   = 720
+	WBuckets = 20
+	HBuckets = 20
 )
 
-func maxTravelTime(a models.Waypoint, b models.Waypoint, ss *models.ScoutSummary) float32 {
-	return float32(0.0)
+func maxTravelTime(a models.Waypoint, b models.Waypoint) float32 {
+	travelD := Vec{(b.XPixels - a.XPixels), (b.YPixels - a.YPixels)}
+	travelG := float32(travelD[1]) / float32(travelD[0])
+
+	x := float32(FrameW) / float32(WBuckets)
+	y := x * travelG
+	bucketD := Vec{int(x), int(y)}
+
+	return (b.T - a.T) * float32(bucketD.length()/travelD.length())
 }
 
 func updateTimeBuckets(db *sql.DB, ss *models.ScoutSummary, si *models.ScoutInteraction) {

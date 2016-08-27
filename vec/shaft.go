@@ -48,7 +48,6 @@ func ShaftFromWaypoints(a models.Waypoint, b models.Waypoint, maxW int, maxH int
 					Vec{a.XPixels + a.HalfWidthPixels, a.YPixels + a.HalfHeightPixels}}}
 		}
 	} else {
-		// b is left edge.
 		if a.YPixels < b.YPixels {
 			// a is bottom, right edge of shaft.
 			return Shaft{bb,

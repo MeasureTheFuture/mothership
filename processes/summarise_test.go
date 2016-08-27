@@ -118,4 +118,16 @@ var _ = Describe("Summarise Process", func() {
 			Ω(si2.Processed).Should(BeTrue())
 		})
 	})
+
+	Context("maxTravelTime", func() {
+		PIt("should return the max travel time for a bucket", func() {
+			// TODO.
+		})
+	})
+
+	Context("updateTimeBuckets", func() {
+		PIT("it should update the travel times for the buckets in a scout summary", func() {
+			// TODO.
+		})
+	})
 })
