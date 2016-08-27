@@ -45,13 +45,13 @@ var _ = Describe("Shaft", func() {
 
 			s2 := ShaftFromWaypoints(wpB, wpA, 10, 10)
 			Ω(s2).Should(Equal(Shaft{AABB{Vec{0, 1}, Vec{7, 9}},
-				[2]Vec{Vec{3, 9}, Vec{0, 5}},
-				[2]Vec{Vec{7, 1}, Vec{4, 1}}}))
+				[2]Vec{Vec{0, 5}, Vec{3, 9}},
+				[2]Vec{Vec{4, 1}, Vec{7, 1}}}))
 
 			s3 := ShaftFromWaypoints(wpC, wpD, 10, 10)
 			Ω(s3).Should(Equal(Shaft{AABB{Vec{0, 0}, Vec{7, 3}},
-				[2]Vec{Vec{0, 1}, Vec{3, 0}},
-				[2]Vec{Vec{4, 3}, Vec{7, 2}}}))
+				[2]Vec{Vec{3, 0}, Vec{0, 1}},
+				[2]Vec{Vec{7, 2}, Vec{4, 3}}}))
 
 			s4 := ShaftFromWaypoints(wpD, wpC, 10, 10)
 			Ω(s4).Should(Equal(Shaft{AABB{Vec{0, 0}, Vec{7, 3}},
@@ -89,6 +89,18 @@ var _ = Describe("Shaft", func() {
 			b2 := &AABB{Vec{0, 8}, Vec{1, 10}}
 			Ω(s.Intersects(b2)).Should(BeFalse())
 			Ω(s2.Intersects(b2)).Should(BeFalse())
+		})
+	})
+
+	Context("isLeft", func() {
+		It("Should return true if a point is left of a line", func() {
+			l := &[2]Vec{Vec{7, 1}, Vec{4, 3}}
+			Ω(isLeft(l, Vec{5, 2})).Should(BeTrue())
+		})
+
+		It("Should return false if a point is right of a line", func() {
+			l := &[2]Vec{Vec{4, 3}, Vec{7, 1}}
+			Ω(isLeft(l, Vec{5, 2})).Should(BeFalse())
 		})
 	})
 })
