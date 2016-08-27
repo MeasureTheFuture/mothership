@@ -34,12 +34,12 @@ func ShaftFromWaypoints(a models.Waypoint, b models.Waypoint, maxW int, maxH int
 	la := [2]Vec{Vec{(b.XPixels - b.HalfWidthPixels), (b.YPixels + b.HalfHeightPixels)},
 		Vec{(a.XPixels - a.HalfWidthPixels), (a.YPixels + a.HalfHeightPixels)}}
 	ra := [2]Vec{Vec{(b.XPixels + b.HalfWidthPixels), (b.YPixels - b.HalfHeightPixels)},
-		Vec{(a.XPixels + a.HalfWidthPixels), (a.YPixels - b.HalfHeightPixels)}}
+		Vec{(a.XPixels + a.HalfWidthPixels), (b.YPixels - b.HalfHeightPixels)}}
 
 	lb := [2]Vec{Vec{(b.XPixels - b.HalfWidthPixels), (b.YPixels - b.HalfHeightPixels)},
 		Vec{(a.XPixels - a.HalfWidthPixels), (a.YPixels - a.HalfHeightPixels)}}
 	rb := [2]Vec{Vec{(b.XPixels + b.HalfWidthPixels), (b.YPixels + b.HalfHeightPixels)},
-		Vec{(a.XPixels + a.HalfWidthPixels), (a.YPixels + b.HalfHeightPixels)}}
+		Vec{(a.XPixels + a.HalfWidthPixels), (a.YPixels + a.HalfHeightPixels)}}
 
 	if a.XPixels < b.XPixels {
 		if a.YPixels < b.YPixels {
@@ -63,6 +63,14 @@ func ShaftFromWaypoints(a models.Waypoint, b models.Waypoint, maxW int, maxH int
 	}
 }
 
-func (s *Shaft) Intersects(b *AABB) {
+func (s *Shaft) Intersects(b *AABB) bool {
+	if !b.Intersects(&s.Bounds) {
+		return false
+	}
 
+	// if b is left of MinPlane - return false.
+
+	// if b is right of MaxPlane - return false.
+
+	return true
 }

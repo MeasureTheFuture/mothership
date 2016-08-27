@@ -74,14 +74,14 @@ func maxTravelTime(a models.Waypoint, b models.Waypoint, ss *models.ScoutSummary
 func updateTimeBuckets(db *sql.DB, ss *models.ScoutSummary, si *models.ScoutInteraction) {
 
 	// For each segment in an interaction.
-		// Generate shaft AABB from the two waypoints.
-		// Work out direction of travel (vec) and total travel duration for segment.
-		// Work out maximum travel time that can be spent in a bucket.
+	// Generate shaft AABB from the two waypoints.
+	// Work out direction of travel (vec) and total travel duration for segment.
+	// Work out maximum travel time that can be spent in a bucket.
 
-		// For each bucket in summary
-			// Intersect test bucket against the shaft AABB.
-			// if intersect bucket
-			// work out how much the bucket intersects shaft.
-			// bt is the ratio of this as multiple of max bucket travel time.
-			// increment bucket time by bt above
+	// For each bucket in summary
+	// Intersect test bucket against the shaft AABB.
+	// if intersect bucket
+	// work out how much the bucket intersects shaft.
+	// bt is the ratio of this as multiple of max bucket travel time.
+	// increment bucket time by bt above
 }
