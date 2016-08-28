@@ -32,3 +32,11 @@ func Max(a int, b int) int {
 	}
 	return b
 }
+
+// MaxF returns the maximum float value out of a and b.
+func MinF(a float32, b float32) float32 {
+	if a < b {
+		return a
+	}
+	return b
+}

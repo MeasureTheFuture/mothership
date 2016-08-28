@@ -120,13 +120,18 @@ var _ = Describe("Summarise Process", func() {
 	})
 
 	Context("maxTravelTime", func() {
-		PIt("should return the max travel time for a bucket", func() {
-			// TODO.
+		It("should return the max travel time for a bucket", func() {
+			wpA := models.Waypoint{0, 0, 10, 10, 0.0}
+			wpB := models.Waypoint{0, 102, 10, 10, 1.0}
+			wpC := models.Waypoint{0, 25, 10, 10, 1.0}
+
+			Ω(maxTravelTime(wpA, wpB)).Should(Equal(float32(0.5)))
+			Ω(maxTravelTime(wpA, wpC)).Should(Equal(float32(1.0)))
 		})
 	})
 
 	Context("updateTimeBuckets", func() {
-		PIT("it should update the travel times for the buckets in a scout summary", func() {
+		PIt("it should update the travel times for the buckets in a scout summary", func() {
 			// TODO.
 		})
 	})

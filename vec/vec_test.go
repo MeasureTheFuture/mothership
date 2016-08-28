@@ -23,30 +23,16 @@ import (
 	"testing"
 )
 
-func TestUtil(t *testing.T) {
+func TestVec(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Util Suite")
+	RunSpecs(t, "Vec Suite")
 }
 
-var _ = Describe("Util", func() {
-	Context("Max", func() {
-		It("Should return the maximum of two values", func() {
-			Ω(Max(5, 2)).Should(Equal(5))
-			Ω(Max(2, 5)).Should(Equal(5))
-		})
-	})
-
-	Context("Min", func() {
-		It("Should return the minimum of two values", func() {
-			Ω(Min(5, 2)).Should(Equal(2))
-			Ω(Min(2, 5)).Should(Equal(2))
-		})
-	})
-
-	Context("MinF", func() {
-		It("should return teh minimum of two float32 values", func() {
-			Ω(MinF(float32(1.0), float32(2.0))).Should(Equal(float32(1.0)))
-			Ω(MinF(float32(2.0), float32(1.0))).Should(Equal(float32(1.0)))
+var _ = Describe("Vec", func() {
+	Context("Length", func() {
+		It("Should return the length of a vector", func() {
+			v := Vec{3, 4}
+			Ω(v.Length()).Should(Equal(5.0))
 		})
 	})
 })

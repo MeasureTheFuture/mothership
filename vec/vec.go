@@ -23,6 +23,6 @@ import (
 
 type Vec [2]int
 
-func (v *Vec) length() float64 {
+func (v *Vec) Length() float64 {
 	return math.Sqrt(float64((v[0] * v[0]) + (v[1] * v[1])))
 }

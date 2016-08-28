@@ -70,14 +70,17 @@ const (
 )
 
 func maxTravelTime(a models.Waypoint, b models.Waypoint) float32 {
-	travelD := Vec{(b.XPixels - a.XPixels), (b.YPixels - a.YPixels)}
+	travelD := vec.Vec{(b.XPixels - a.XPixels), (b.YPixels - a.YPixels)}
 	travelG := float32(travelD[1]) / float32(travelD[0])
 
 	x := float32(FrameW) / float32(WBuckets)
 	y := x * travelG
-	bucketD := Vec{int(x), int(y)}
+	bucketD := vec.Vec{int(x), int(y)}
 
-	return (b.T - a.T) * float32(bucketD.length()/travelD.length())
+	// Make sure that we don't overallocate time for the bucket, when the
+	// travelD is shorter than the bucket itself.
+	f := vec.MinF(float32(1.0), float32(bucketD.Length()/travelD.Length()))
+	return (b.T - a.T) * f
 }
 
 func updateTimeBuckets(db *sql.DB, ss *models.ScoutSummary, si *models.ScoutInteraction) {
