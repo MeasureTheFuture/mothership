@@ -54,6 +54,47 @@ LocationLabel.contextTypes = {
   store: React.PropTypes.object
 }
 
+var Placeholder = React.createClass({
+  getFrameURL: function() {
+    const { store } = this.context;
+
+    if (!ActiveLocation(store).authorised) {
+      return 'img/off-frame.gif';
+    }
+
+    if (ActiveLocation(store).state == 'calibrated') {
+      return 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();
+    } else if (ActiveLocation(store).state == 'calibrating') {
+      return 'img/calibrating-frame.gif';
+    }
+
+    return 'img/uncalibrated-frame.gif';
+  },
+
+  render: function() {
+    return (
+      <img className="pure-img" alt='test' src={this.getFrameURL()}/>
+    )
+  }
+});
+Placeholder.contextTypes = {
+  store: React.PropTypes.object
+}
+
+var Heatmap = React.createClass({
+  render: function() {
+    const { store } = this.context;
+    url = 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();
+
+    return (
+      <img className="pure-img" alt='test' src={url}/>
+    )
+  }
+});
+Heatmap.contextTypes = {
+  store: React.PropTypes.object
+}
+
 Location = React.createClass({
   getInitialState: function() {
     return {locationEdit: false};
@@ -71,25 +112,10 @@ Location = React.createClass({
     this.render();
   },
 
-  getFrameURL: function() {
-    const { store } = this.context;
-
-    if (!ActiveLocation(store).authorised) {
-      return 'img/off-frame.gif';
-    }
-
-    if (ActiveLocation(store).state == 'measuring' || ActiveLocation(store).state == 'calibrated') {
-      return 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();
-    } else if (ActiveLocation(store).state == 'calibrating') {
-      return 'img/calibrating-frame.gif';
-    }
-
-    return 'img/uncalibrated-frame.gif';
-  },
-
   render: function() {
     const { store } = this.context;
     var locationName = (this.state.locationEdit ? <LocationEdit callBack={this.saveCallBack} /> : <LocationLabel callBack={this.editCallBack} /> )
+    var heatmap = (ActiveLocation(store).state == 'measuring') ? <Heatmap /> : <Placeholder />
 
     return (
       <div className="location">
@@ -97,7 +123,7 @@ Location = React.createClass({
 
         <div id="location-details">
           <h3>{ ActiveLocation(store).summary.VisitorCount } VISITORS</h3>
-          <img className="pure-img" alt='test' src={this.getFrameURL()}/>
+          { heatmap }
           <div className="location-meta"><PrimaryActions /></div>
         </div>
       </div>
