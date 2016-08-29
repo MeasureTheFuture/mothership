@@ -105,6 +105,8 @@ Testing for the frontend:
 - [ ] Better identification that the UI is in measuring mode / working
 - [ ] Heatmap rendering
 - [ ] Heatmap number crunching
+- [ ] Write tests for summarise and heatmap generation.
+- [ ] Write tests for all the other cases when an AABB intersects a shaft (shaft_test)
 - [ ] An easier way to tweak the OpenCV settings for best results
 - [ ] Write tests for the frontend components
 - [ ] Finish pending scout interaction tests

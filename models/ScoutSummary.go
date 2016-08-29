@@ -94,13 +94,6 @@ func GetScoutSummaryById(db *sql.DB, scoutId int64) (*ScoutSummary, error) {
 	return &result, err
 }
 
-func IncrementVisitorCount(db *sql.DB, scoutId int64) error {
-	const query = `UPDATE scout_summaries SET visitor_count = visitor_count + 1 WHERE scout_id = $1`
-	_, err := db.Exec(query, scoutId)
-
-	return err
-}
-
 func (si *ScoutSummary) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_summaries (scout_id, visitor_count, visit_time_buckets) VALUES ($1, $2, $3)`
 	_, err := db.Exec(query, si.ScoutId, si.VisitorCount, si.VisitTimeBuckets)

@@ -46,11 +46,20 @@ func updateUnprocessed(db *sql.DB) {
 	}
 
 	for _, si := range up {
-		err := models.IncrementVisitorCount(db, si.ScoutId)
+		ss, err := models.GetScoutSummaryById(db, si.ScoutId)
 		if err != nil {
-			log.Printf("ERROR: Summarise unable to increment visitor count")
+			log.Printf("ERROR: Summarise unable to get scout summary")
 			log.Print(err)
 			return
+		}
+
+		ss.VisitorCount += 1
+		updateTimeBuckets(db, ss, si)
+
+		err = ss.Update(db)
+		if err != nil {
+			log.Printf("ERROR: Summarise unable to update scout summary")
+			log.Print(err)
 		}
 
 		err = models.MarkProcessed(db, si.Id)
@@ -67,6 +76,8 @@ const (
 	FrameH   = 720
 	WBuckets = 20
 	HBuckets = 20
+	BucketW  = FrameW / WBuckets
+	BucketH  = FrameH / HBuckets
 )
 
 func maxTravelTime(a models.Waypoint, b models.Waypoint) float32 {
@@ -78,22 +89,39 @@ func maxTravelTime(a models.Waypoint, b models.Waypoint) float32 {
 	bucketD := vec.Vec{int(x), int(y)}
 
 	// Make sure that we don't overallocate time for the bucket, when the
-	// travelD is shorter than the bucket itself.
+	// travelD is shorter than the bucket itself, the maximum multiplication
+	// value for the maxTravel time is 1.0.
 	f := vec.MinF(float32(1.0), float32(bucketD.Length()/travelD.Length()))
 	return (b.T - a.T) * f
 }
 
 func updateTimeBuckets(db *sql.DB, ss *models.ScoutSummary, si *models.ScoutInteraction) {
-
 	// For each segment in an interaction.
-	// Generate shaft AABB from the two waypoints.
-	// Work out direction of travel (vec) and total travel duration for segment.
-	// Work out maximum travel time that can be spent in a bucket.
+	for k := 0; k < (len(si.Waypoints) - 1); k++ {
 
-	// For each bucket in summary
-	// Intersect test bucket against the shaft AABB.
-	// if intersect bucket
-	// work out how much the bucket intersects shaft.
-	// bt is the ratio of this as multiple of max bucket travel time.
-	// increment bucket time by bt above
+		// Generate a shaft AABB from the two waypoints.
+		wpA := models.Waypoint{si.Waypoints[k][0], si.Waypoints[k][1],
+			si.WaypointWidths[k][0], si.WaypointWidths[k][1], si.WaypointTimes[k]}
+		wpB := models.Waypoint{si.Waypoints[k+1][0], si.Waypoints[k+1][1],
+			si.WaypointWidths[k+1][0], si.WaypointWidths[k+1][1], si.WaypointTimes[k+1]}
+
+		s := vec.ShaftFromWaypoints(wpA, wpB, FrameW, FrameH)
+
+		// Work out maximum travel time that can be spent in a bucket.
+		mt := maxTravelTime(wpA, wpB)
+
+		// For each of the buckets, see if it intersects the shaft AABB and if it does
+		// increment the bucket time by the maximum travel time.
+		for i := 0; i < WBuckets; i++ {
+			for j := 0; j < HBuckets; j++ {
+				bucket := vec.AABBFromIndex(i, j, BucketW, BucketH)
+				// TODO: Possibly improve time estimate by working out how much of
+				// the bucket overlaps the shaft. Use it as a ratio between 0 and 1
+				// to multiply max time.
+				if s.Intersects(&bucket) {
+					ss.VisitTimeBuckets[i][j] += mt
+				}
+			}
+		}
+	}
 }

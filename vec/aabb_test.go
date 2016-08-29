@@ -43,6 +43,11 @@ var _ = Describe("AABB", func() {
 
 			Ω(AABBFromWaypoint(wp, 10, 10)).Should(Equal(AABB{Vec{3, 1}, Vec{7, 9}}))
 		})
+
+		It("should create an AABB from i and j bucket indexes", func() {
+			Ω(AABBFromIndex(0, 0, 51, 36)).Should(Equal(AABB{Vec{0, 0}, Vec{51, 36}}))
+			Ω(AABBFromIndex(2, 3, 51, 36)).Should(Equal(AABB{Vec{102, 108}, Vec{153, 144}}))
+		})
 	})
 
 	Context("Intersects", func() {

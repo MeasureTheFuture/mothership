@@ -44,7 +44,7 @@ var _ = Describe("Util", func() {
 	})
 
 	Context("MinF", func() {
-		It("should return teh minimum of two float32 values", func() {
+		It("should return the minimum of two float32 values", func() {
 			Ω(MinF(float32(1.0), float32(2.0))).Should(Equal(float32(1.0)))
 			Ω(MinF(float32(2.0), float32(1.0))).Should(Equal(float32(1.0)))
 		})

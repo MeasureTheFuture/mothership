@@ -43,23 +43,6 @@ var _ = Describe("Scout Summary Model", func() {
 			Ω(ss).Should(Equal(&ScoutSummary{s.Id, 0, Buckets{}}))
 		})
 
-		It("Should be able to increment the visitor count.", func() {
-			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1",
-				8080, true, "foo", "idle", &ScoutSummary{}}
-			err := s.Insert(db)
-			Ω(err).Should(BeNil())
-
-			ss, err := GetScoutSummaryById(db, s.Id)
-			Ω(err).Should(BeNil())
-			Ω(ss.VisitorCount).Should(Equal(int64(0)))
-
-			err = IncrementVisitorCount(db, s.Id)
-			Ω(err).Should(BeNil())
-			ss, err = GetScoutSummaryById(db, s.Id)
-			Ω(err).Should(BeNil())
-			Ω(ss.VisitorCount).Should(Equal(int64(1)))
-		})
-
 		It("Should be able to update existing scout summary.", func() {
 			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1",
 				8080, true, "foo", "idle", &ScoutSummary{}}

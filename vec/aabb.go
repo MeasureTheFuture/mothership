@@ -27,6 +27,12 @@ type AABB struct {
 	Max Vec // Max is the maximum extents of the bounding box.
 }
 
+// AABBFromIndex creates an AABB from the supplied indexes, and the grid size.
+func AABBFromIndex(i int, j int, iWidth int, jWidth int) AABB {
+	min := Vec{i * iWidth, j * jWidth}
+	return AABB{min, Vec{min[0] + iWidth, min[1] + jWidth}}
+}
+
 // AABBFromWaypoints creates an AABB from the two supplied waypoints and the
 // maximum dimensions of the frame.
 func AABBFromWaypoints(a models.Waypoint, b models.Waypoint, maxW int, maxH int) AABB {
