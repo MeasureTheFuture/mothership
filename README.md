@@ -101,11 +101,11 @@ Testing for the frontend:
 - [x] Add 'measure' button to the interface.
 - [x] Update the interface to display visitor count from backend.
 - [x] Mothership generates internal server error (500) when no scouts are present.
-- [ ] Ability to stop mothership from the UI
+- [ ] Ability to stop measuring from the UI
 - [ ] Better identification that the UI is in measuring mode / working
 - [ ] Heatmap rendering
 - [ ] Heatmap number crunching
-- [ ] Write tests for summarise and heatmap generation.
+- [ ] Write tests for summarise and heatmap generation. summarise_test
 - [ ] Write tests for all the other cases when an AABB intersects a shaft (shaft_test)
 - [ ] An easier way to tweak the OpenCV settings for best results
 - [ ] Write tests for the frontend components

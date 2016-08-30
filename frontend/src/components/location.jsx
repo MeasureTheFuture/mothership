@@ -38,6 +38,7 @@ LocationEdit.contextTypes = {
   store: React.PropTypes.object
 }
 
+
 var LocationLabel = React.createClass({
   render: function() {
     const { store } = this.context;
@@ -53,6 +54,7 @@ var LocationLabel = React.createClass({
 LocationLabel.contextTypes = {
   store: React.PropTypes.object
 }
+
 
 var Placeholder = React.createClass({
   getFrameURL: function() {
@@ -82,18 +84,65 @@ Placeholder.contextTypes = {
 }
 
 var Heatmap = React.createClass({
+  lerp: function(l, r, t) {
+    return l + (r - l) * t
+  },
+
+  generateFill: function(t) {
+    if (t < 0.5) {
+      return 'rgba('+this.lerp(19, 250, t)+","+this.lerp(27, 212, t)+","+this.lerp(66, 12, t)+","+this.lerp(0.1, 0.1, t)+")"
+    }
+
+    return 'rgba('+this.lerp(250, 186, t)+","+this.lerp(212, 8, t)+","+this.lerp(12, 16, t)+","+this.lerp(0.1, 0.5, t)+")"
+  },
+
+  maxTime: function(buckets) {
+    var maxT = 0.0;
+
+    buckets.map(function(i) {
+      i.map(function(j) {
+        maxT = Math.max(maxT, j);
+      })
+    })
+
+    return maxT
+  },
+
   render: function() {
     const { store } = this.context;
-    url = 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();
+    var url = 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();
+    var buckets = ActiveLocation(store).summary.VisitTimeBuckets;
+    var w = 700
+    var h = 395
+    var iBuckets = buckets.length;
+    var jBuckets = buckets[0].length;
+    var bucketW = w/iBuckets;
+    var bucketH = h/jBuckets;
+    var maxT = this.maxTime(buckets);
+
+    var data = []
+    for (var i = 0; i < iBuckets; i++) {
+      for (var j = 0; j < jBuckets; j++) {
+        var t = 0.0;
+        if (maxT > 0.0) {
+          t = buckets[i][j] / maxT;
+        }
+        data.push(<rect key={i*iBuckets+j} x={i*bucketW} y={j*bucketH} width={bucketW} height={bucketH} style={{fill:this.generateFill(t)}} />);
+      }
+    }
 
     return (
-      <img className="pure-img" alt='test' src={url}/>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={w} height={h}>
+        <image x="0" y="0" width={w} height={h} xlinkHref={url}/>
+        {data}
+      </svg>
     )
   }
 });
 Heatmap.contextTypes = {
   store: React.PropTypes.object
 }
+
 
 Location = React.createClass({
   getInitialState: function() {
