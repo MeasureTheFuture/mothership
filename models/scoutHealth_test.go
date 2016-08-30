@@ -57,4 +57,26 @@ var _ = Describe("Scout Health Model", func() {
 			Ω(err).ShouldNot(BeNil())
 		})
 	})
+
+	Context("Delete", func() {
+		It("should be able to delete healths for a specified scout", func() {
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1",
+				8080, true, "foo", "idle", &ScoutSummary{}}
+			err := s.Insert(db)
+			Ω(err).Should(BeNil())
+
+			sh := ScoutHealth{s.Id, 0.1, 0.2, 0.3, 0.4, time.Now()}
+			err = sh.Insert(db)
+
+			sh2 := ScoutHealth{s.Id, 0.1, 0.2, 0.3, 0.4, time.Now()}
+			err = sh2.Insert(db)
+
+			err = DeleteScoutHealths(db, s.Id)
+			Ω(err).Should(BeNil())
+
+			n, err := NumScoutHealths(db)
+			Ω(err).Should(BeNil())
+			Ω(n).Should(Equal(int64(0)))
+		})
+	})
 })

@@ -94,6 +94,13 @@ func GetScoutSummaryById(db *sql.DB, scoutId int64) (*ScoutSummary, error) {
 	return &result, err
 }
 
+func (si *ScoutSummary) Clear(db *sql.DB) error {
+	si.VisitorCount = 0
+	si.VisitTimeBuckets = Buckets{}
+
+	return si.Update(db)
+}
+
 func (si *ScoutSummary) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_summaries (scout_id, visitor_count, visit_time_buckets) VALUES ($1, $2, $3)`
 	_, err := db.Exec(query, si.ScoutId, si.VisitorCount, si.VisitTimeBuckets)

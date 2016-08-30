@@ -95,6 +95,44 @@ func UpdateScout(db *sql.DB, c echo.Context) error {
 		return errors.New("Mismatched Ids")
 	}
 
+	// If the scout is de-authorised/deactivated - clear it all out.
+	if !ns.Authorised {
+		ns.State = models.IDLE
+
+		err = models.DeleteScoutHealths(db, ns.Id)
+		if err != nil {
+			return err
+		}
+
+		err = models.DeleteScoutInteractions(db, ns.Id)
+		if err != nil {
+			return err
+		}
+
+		err = models.DeleteScoutLogs(db, ns.Id)
+		if err != nil {
+			return err
+		}
+
+		ss, err := models.GetScoutSummaryById(db, ns.Id)
+		if err != nil {
+			return err
+		}
+
+		err = ss.Clear(db)
+		if err != nil {
+			return err
+		}
+
+		err = ns.ClearCalibrationFrame(db)
+		if err != nil {
+			return err
+		}
+
+		// Tell the scout to stop!
+		go http.Get("http://" + ns.IpAddress + ":" + strconv.Itoa(int(ns.Port)) + "/measure/stop")
+	}
+
 	err = ns.Update(db)
 	if err != nil {
 		return err

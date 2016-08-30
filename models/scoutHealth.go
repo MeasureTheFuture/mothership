@@ -53,6 +53,12 @@ func GetLastScoutHealth(db *sql.DB, scoutId int64) (*ScoutHealth, error) {
 	return &result, err
 }
 
+func DeleteScoutHealths(db *sql.DB, scoutId int64) error {
+	const query = `DELETE FROM scout_healths WHERE scout_id = $1`
+	_, err := db.Exec(query, scoutId)
+	return err
+}
+
 func NumScoutHealths(db *sql.DB) (int64, error) {
 	const query = `SELECT COUNT(*) FROM scout_healths`
 	var result int64

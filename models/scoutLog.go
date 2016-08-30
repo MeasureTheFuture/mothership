@@ -58,6 +58,13 @@ func NumScoutLogs(db *sql.DB) (int64, error) {
 	return result, err
 }
 
+func DeleteScoutLogs(db *sql.DB, scoutId int64) error {
+	const query = `DELETE FROM scout_logs WHERE scout_id = $1`
+	_, err := db.Exec(query, scoutId)
+
+	return err
+}
+
 func (s *ScoutLog) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_logs (scout_id, log, created_at) VALUES ($1, $2, $3)`
 	_, err := db.Exec(query, s.ScoutId, s.Log, s.CreatedAt)

@@ -246,6 +246,12 @@ func NumScoutInteractions(db *sql.DB) (int64, error) {
 	return result, err
 }
 
+func DeleteScoutInteractions(db *sql.DB, scoutId int64) error {
+	const query = `DELETE FROM scout_interactions WHERE scout_id = $1`
+	_, err := db.Exec(query, scoutId)
+	return err
+}
+
 func (si *ScoutInteraction) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_interactions (scout_id, duration, waypoints,
 		waypoint_widths, waypoint_times, processed, entered_at, created_at) VALUES

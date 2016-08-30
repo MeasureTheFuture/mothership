@@ -68,6 +68,30 @@ var _ = Describe("Scout Interaction Model", func() {
 		})
 	})
 
+	Context("Delete", func() {
+		It("Should be able to delete interactions for a specified scout", func() {
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo",
+				"idle", &ScoutSummary{}}
+			err := s.Insert(db)
+			Ω(err).Should(BeNil())
+
+			si := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, time.Now(), time.Now()}
+			err = si.Insert(db)
+			Ω(err).Should(BeNil())
+
+			si2 := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, time.Now(), time.Now()}
+			err = si2.Insert(db)
+			Ω(err).Should(BeNil())
+
+			err = DeleteScoutInteractions(db, s.Id)
+			Ω(err).Should(BeNil())
+
+			n, err := NumScoutInteractions(db)
+			Ω(err).Should(BeNil())
+			Ω(n).Should(Equal(int64(0)))
+		})
+	})
+
 	Context("Unprocessed", func() {
 		PIt("Should be able to get unproccessed interactions", func() {
 			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo",

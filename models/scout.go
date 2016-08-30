@@ -125,6 +125,12 @@ func NumScouts(db *sql.DB) (int64, error) {
 	return result, err
 }
 
+func (s *Scout) ClearCalibrationFrame(db *sql.DB) error {
+	const query = `UPDATE scouts SET calibration_frame = NULL WHERE id = $1`
+	_, err := db.Exec(query, s.Id)
+	return err
+}
+
 func (s *Scout) UpdateCalibrationFrame(db *sql.DB, frame []byte) error {
 	const query = `UPDATE scouts SET calibration_frame = $1 WHERE id = $2`
 	_, err := db.Exec(query, frame, s.Id)
