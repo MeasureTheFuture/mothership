@@ -132,6 +132,22 @@ var _ = Describe("Summarise Process", func() {
 
 	Context("updateTimeBuckets", func() {
 		PIt("it should update the travel times for the buckets in a scout summary", func() {
+			// wpA :=
+
+			//       {
+   //       "XPixels":1153,
+   //       "YPixels":254,
+   //       "HalfWidthPixels":24,
+   //       "HalfHeightPixels":64,
+   //       "T":5.23e-07
+   //    },
+   //    {
+   //       "XPixels":1166,
+   //       "YPixels":267,
+   //       "HalfWidthPixels":36,
+   //       "HalfHeightPixels":77,
+   //       "T":1.6694527
+   //    },
 			// TODO.
 		})
 	})

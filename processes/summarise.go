@@ -72,8 +72,8 @@ func updateUnprocessed(db *sql.DB) {
 }
 
 const (
-	FrameW   = 1024
-	FrameH   = 720
+	FrameW   = 1920
+	FrameH   = 1080
 	WBuckets = 20
 	HBuckets = 20
 	BucketW  = FrameW / WBuckets

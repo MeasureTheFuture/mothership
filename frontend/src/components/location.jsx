@@ -84,16 +84,26 @@ Placeholder.contextTypes = {
 }
 
 var Heatmap = React.createClass({
+  toI: function(v) {
+    return v | 0;
+  },
+
   lerp: function(l, r, t) {
     return l + (r - l) * t
   },
 
   generateFill: function(t) {
     if (t < 0.5) {
-      return 'rgba('+this.lerp(19, 250, t)+","+this.lerp(27, 212, t)+","+this.lerp(66, 12, t)+","+this.lerp(0.1, 0.1, t)+")"
+      return 'rgba('+this.toI(this.lerp(19, 250, t))+","
+        +this.toI(this.lerp(27, 212, t))+","
+        +this.toI(this.lerp(66, 12, t))+","
+        +this.lerp(0.1, 0.3, t)+")"
     }
 
-    return 'rgba('+this.lerp(250, 186, t)+","+this.lerp(212, 8, t)+","+this.lerp(12, 16, t)+","+this.lerp(0.1, 0.5, t)+")"
+    return 'rgba('+this.toI(this.lerp(250, 186, t))+","
+      +this.toI(this.lerp(212, 8, t))+","
+      +this.toI(this.lerp(12, 16, t))+","
+      +this.lerp(0.3, 0.5, t)+")"
   },
 
   maxTime: function(buckets) {
@@ -127,6 +137,7 @@ var Heatmap = React.createClass({
         if (maxT > 0.0) {
           t = buckets[i][j] / maxT;
         }
+
         data.push(<rect key={i*iBuckets+j} x={i*bucketW} y={j*bucketH} width={bucketW} height={bucketH} style={{fill:this.generateFill(t)}} />);
       }
     }
