@@ -118,17 +118,20 @@ var Heatmap = React.createClass({
     return maxT
   },
 
+
+
   render: function() {
     const { store } = this.context;
     var url = 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();
     var buckets = ActiveLocation(store).summary.VisitTimeBuckets;
-    var w = 700
-    var h = 395
+    var w = 1920;
+    var h = 1080;
     var iBuckets = buckets.length;
     var jBuckets = buckets[0].length;
     var bucketW = w/iBuckets;
     var bucketH = h/jBuckets;
     var maxT = this.maxTime(buckets);
+    var viewBox="0 0 " + w + " " + h;
 
     var data = []
     for (var i = 0; i < iBuckets; i++) {
@@ -143,7 +146,7 @@ var Heatmap = React.createClass({
     }
 
     return (
-      <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={w} height={h}>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox={viewBox}>
         <image x="0" y="0" width={w} height={h} xlinkHref={url}/>
         {data}
       </svg>
