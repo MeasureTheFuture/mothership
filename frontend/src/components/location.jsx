@@ -118,8 +118,6 @@ var Heatmap = React.createClass({
     return maxT
   },
 
-
-
   render: function() {
     const { store } = this.context;
     var url = 'scouts/'+ActiveLocation(store).id+'/frame.jpg?d=' + new Date().getTime();

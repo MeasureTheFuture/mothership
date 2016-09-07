@@ -22,7 +22,8 @@ import { UpdateActiveLocation, ActiveLocation } from '../reducers/index.js'
 var DeactivateAction = React.createClass({
   handleDeactivate: function() {
     const { store } = this.context;
-    UpdateActiveLocation(store, "authorised", false);
+    UpdateActiveLocation(store, "state", 'idle');
+    //UpdateActiveLocation(store, "authorised", false);
   },
 
   render: function() {
