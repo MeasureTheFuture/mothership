@@ -23,7 +23,7 @@ var DeactivateAction = React.createClass({
   handleDeactivate: function() {
     const { store } = this.context;
     UpdateActiveLocation(store, "state", 'idle');
-    //UpdateActiveLocation(store, "authorised", false);
+    UpdateActiveLocation(store, "authorised", false);
   },
 
   render: function() {
