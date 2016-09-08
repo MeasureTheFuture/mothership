@@ -101,10 +101,13 @@ Testing for the frontend:
 - [x] Add 'measure' button to the interface.
 - [x] Update the interface to display visitor count from backend.
 - [x] Mothership generates internal server error (500) when no scouts are present.
-- [ ] Ability to stop measuring from the UI
+- [x] Ability to stop measuring from the UI
+- [x] Heatmap rendering
+- [x] Heatmap number crunching
+- [ ] Need to render heatmap scale.
+- [ ] Need to generate histogram / timeline.
 - [ ] Better identification that the UI is in measuring mode / working
-- [ ] Heatmap rendering
-- [ ] Heatmap number crunching
+- [ ] Need to calculate and store heatmap / statistics overtime.
 - [ ] Write tests for summarise and heatmap generation. summarise_test
 - [ ] Write tests for all the other cases when an AABB intersects a shaft (shaft_test)
 - [ ] An easier way to tweak the OpenCV settings for best results
