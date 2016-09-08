@@ -29,6 +29,10 @@ img {
     padding: 0;
 }
 
+.placeholder {
+    width:100%;
+}
+
 .header {
     text-align: center;
     top: auto;

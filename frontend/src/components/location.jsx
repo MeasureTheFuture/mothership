@@ -75,7 +75,7 @@ var Placeholder = React.createClass({
 
   render: function() {
     return (
-      <img className="pure-img" alt='test' src={this.getFrameURL()}/>
+      <img className="pure-img placeholder" alt='test' src={this.getFrameURL()}/>
     )
   }
 });
