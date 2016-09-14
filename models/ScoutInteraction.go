@@ -21,6 +21,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"errors"
+	"github.com/MeasureTheFuture/mothership/configuration"
 	_ "github.com/lib/pq"
 	"strconv"
 	"strings"
@@ -258,4 +259,11 @@ func (si *ScoutInteraction) Insert(db *sql.DB) error {
 		($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`
 	return db.QueryRow(query, si.ScoutId, si.Duration, si.Waypoints, si.WaypointWidths,
 		si.WaypointTimes, si.Processed, si.EnteredAt, si.CreatedAt).Scan(&si.Id)
+}
+
+func ScoutInteractionsAsCSV(db *sql.DB) (string, error) {
+	file := configuration.GetDataDir() + "/scout_interactions.csv"
+	query := "COPY scout_interactions TO '" + file + "' DELIMITER ',' CSV HEADER"
+	_, err := db.Exec(query)
+	return file, err
 }

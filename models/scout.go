@@ -21,7 +21,10 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"errors"
+	"fmt"
+	"github.com/MeasureTheFuture/mothership/configuration"
 	_ "github.com/lib/pq"
+	"io/ioutil"
 )
 
 type ScoutState string
@@ -163,4 +166,43 @@ func (s *Scout) Update(db *sql.DB) error {
 				   state = $6 WHERE id = $7`
 	_, err := db.Exec(query, s.UUID, s.IpAddress, s.Port, s.Authorised, s.Name, s.State, s.Id)
 	return err
+}
+
+func ScoutsAsCSV(db *sql.DB) ([]string, error) {
+	var files []string
+
+	file := configuration.GetDataDir() + "/scouts.csv"
+	query := "COPY (SELECT id, uuid, ip_address, port, authorised, name, state FROM scouts) TO '" + file + "' DELIMITER ',' CSV HEADER"
+	_, err := db.Exec(query)
+	files = append(files, file)
+
+	const query2 = `SELECT id, calibration_frame FROM scouts`
+	var image []byte
+	var id int64
+
+	rows, err := db.Query(query2)
+	if err == sql.ErrNoRows {
+		return files, nil
+	} else if err != nil {
+		return files, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&id, &image)
+		if err != nil {
+			return files, err
+		}
+
+		// Write image.
+		imgF := configuration.GetDataDir() + "/scout" + fmt.Sprintf("%d", id) + ".jpg"
+		err = ioutil.WriteFile(imgF, image, 0644)
+		if err != nil {
+			return files, err
+		}
+
+		files = append(files, imgF)
+	}
+
+	return files, err
 }

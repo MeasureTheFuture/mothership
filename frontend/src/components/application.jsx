@@ -46,6 +46,8 @@ var NavList = React.createClass({
     return (
       <ul className="navList">
         {navNodes}
+        <li className="navItem">&nbsp;</li>
+        <li className="navItem"><a href="/download">[<i className="fa fa-download"></i> Download Data]</a></li>
       </ul>
     )
   }

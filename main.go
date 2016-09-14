@@ -86,6 +86,10 @@ func main() {
 		return controllers.UpdateScout(db, c)
 	})
 
+	e.GET("/download", func(c echo.Context) error {
+		return controllers.DownloadData(db, c)
+	})
+
 	// SCOUT_API for recieving data from the scout hardware.
 	e.POST("/scout_api/calibrated", func(c echo.Context) error {
 		return controllers.ScoutCalibrated(db, c)

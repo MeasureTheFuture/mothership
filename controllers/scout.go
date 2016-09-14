@@ -18,15 +18,83 @@
 package controllers
 
 import (
+	"archive/zip"
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path"
 	"strconv"
 )
+
+func DownloadData(db *sql.DB, c echo.Context) error {
+	var files []string
+
+	sh, err := models.ScoutHealthsAsCSV(db)
+	if err != nil {
+		return err
+	}
+	files = append(files, sh)
+
+	si, err := models.ScoutInteractionsAsCSV(db)
+	if err != nil {
+		return err
+	}
+	files = append(files, si)
+
+	ss, err := models.ScoutSummariesAsCSV(db)
+	if err != nil {
+		return err
+	}
+	files = append(files, ss)
+
+	sa, err := models.ScoutsAsCSV(db)
+	if err != nil {
+		return err
+	}
+	files = append(files, sa[:]...)
+
+	// Zip the data export.
+	buf := new(bytes.Buffer)
+	w := zip.NewWriter(buf)
+	for _, file := range files {
+		dst, err := w.Create(path.Base(file))
+		if err != nil {
+			return err
+		}
+
+		src, err := os.Open(file)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(dst, src)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = w.Close()
+	if err != nil {
+		return err
+	}
+
+	// Write the zip to disk.
+	zipFile := path.Dir(sh) + "/download.zip"
+	err = ioutil.WriteFile(zipFile, buf.Bytes(), 0644)
+	if err != nil {
+		return err
+	}
+
+	// Send zip to zee client.
+	return c.File(zipFile)
+}
 
 func GetScouts(db *sql.DB, c echo.Context) error {
 	s, err := models.GetAllScouts(db)

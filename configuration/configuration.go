@@ -20,6 +20,7 @@ package configuration
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 )
 
 type Configuration struct {
@@ -30,6 +31,20 @@ type Configuration struct {
 	Address           string // The address and port that the mothership is accessible on.
 	StaticAssets      string // The path to the static assets rendered by the mothership.
 	SummariseInterval int    // The number of milliseconds to wait between updating the interaction summaries.
+}
+
+func GetDataDir() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]) + "/data")
+	if err != nil {
+		return ""
+	}
+
+	err = os.Mkdir(dir, os.ModeDir)
+	if os.IsNotExist(err) {
+		return ""
+	}
+
+	return dir
 }
 
 func Parse(configFile string) (c Configuration, err error) {

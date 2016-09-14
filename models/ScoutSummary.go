@@ -21,6 +21,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"errors"
+	"github.com/MeasureTheFuture/mothership/configuration"
 	_ "github.com/lib/pq"
 	"strconv"
 	"strings"
@@ -113,4 +114,11 @@ func (si *ScoutSummary) Update(db *sql.DB) error {
 	_, err := db.Exec(query, si.VisitorCount, si.VisitTimeBuckets, si.ScoutId)
 
 	return err
+}
+
+func ScoutSummariesAsCSV(db *sql.DB) (string, error) {
+	file := configuration.GetDataDir() + "/scout_summaries.csv"
+	query := "COPY scout_summaries TO '" + file + "' DELIMITER ',' CSV HEADER"
+	_, err := db.Exec(query)
+	return file, err
 }

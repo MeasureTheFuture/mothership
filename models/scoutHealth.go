@@ -19,6 +19,7 @@ package models
 
 import (
 	"database/sql"
+	"github.com/MeasureTheFuture/mothership/configuration"
 	_ "github.com/lib/pq"
 	"time"
 )
@@ -72,4 +73,11 @@ func (s *ScoutHealth) Insert(db *sql.DB) error {
 		created_at) VALUES ($1, $2, $3, $4, $5, $6)`
 	_, err := db.Exec(query, s.ScoutId, s.CPU, s.Memory, s.TotalMemory, s.Storage, s.CreatedAt)
 	return err
+}
+
+func ScoutHealthsAsCSV(db *sql.DB) (string, error) {
+	file := configuration.GetDataDir() + "/scout_healths.csv"
+	query := "COPY scout_healths TO '" + file + "' DELIMITER ',' CSV HEADER"
+	_, err := db.Exec(query)
+	return file, err
 }
