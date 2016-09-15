@@ -56,9 +56,8 @@ var _ = Describe("Scout Interaction Model", func() {
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
-			t := time.Now().UTC()
-			et := t.Round(15 * time.Minute)
-			si := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, t, et}
+			et := time.Now().UTC().Round(15 * time.Minute)
+			si := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, et}
 			err = si.Insert(db)
 			Ω(err).Should(BeNil())
 
@@ -75,11 +74,11 @@ var _ = Describe("Scout Interaction Model", func() {
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
-			si := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, time.Now(), time.Now()}
+			si := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, time.Now()}
 			err = si.Insert(db)
 			Ω(err).Should(BeNil())
 
-			si2 := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, time.Now(), time.Now()}
+			si2 := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}, [2]int{5, 6}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, time.Now()}
 			err = si2.Insert(db)
 			Ω(err).Should(BeNil())
 
@@ -99,17 +98,16 @@ var _ = Describe("Scout Interaction Model", func() {
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
-			t := time.Now().UTC()
-			et := t.Round(15 * time.Minute)
-			si1 := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, t, et}
+			et := time.Now().UTC().Round(15 * time.Minute)
+			si1 := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, et}
 			err = si1.Insert(db)
 			Ω(err).Should(BeNil())
 
-			si2 := ScoutInteraction{-1, s.Id, 0.3, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, t, et}
+			si2 := ScoutInteraction{-1, s.Id, 0.3, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, et}
 			err = si2.Insert(db)
 			Ω(err).Should(BeNil())
 
-			si3 := ScoutInteraction{-1, s.Id, 0.4, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, true, t, et}
+			si3 := ScoutInteraction{-1, s.Id, 0.4, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, true, et}
 			err = si3.Insert(db)
 			Ω(err).Should(BeNil())
 

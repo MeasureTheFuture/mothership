@@ -55,7 +55,6 @@ type ScoutInteraction struct {
 	WaypointWidths Path
 	WaypointTimes  RealArray
 	Processed      bool
-	CreatedAt      time.Time
 	EnteredAt      time.Time
 }
 
@@ -160,48 +159,45 @@ func CreateScoutInteraction(i *Interaction) ScoutInteraction {
 
 	result.Processed = false
 	result.EnteredAt = i.Entered
-	result.CreatedAt = time.Now().UTC()
 
 	return result
 }
 
 func GetScoutInteractionById(db *sql.DB, id int64) (*ScoutInteraction, error) {
 	const query = `SELECT id, scout_id, duration, waypoints, waypoint_widths, waypoint_times,
-	processed, entered_at, created_at FROM scout_interactions WHERE id = $1`
+	processed, entered_at FROM scout_interactions WHERE id = $1`
 
 	var result ScoutInteraction
 	var et time.Time
-	var ct time.Time
 	err := db.QueryRow(query, id).Scan(&result.Id, &result.ScoutId, &result.Duration,
 		&result.Waypoints, &result.WaypointWidths, &result.WaypointTimes,
-		&result.Processed, &et, &ct)
+		&result.Processed, &et)
 	result.EnteredAt = et.UTC()
-	result.CreatedAt = ct.UTC()
 
 	return &result, err
 }
 
-func GetScoutInteractionByScoutId(db *sql.DB, scoutId int64, t time.Time) (*ScoutInteraction, error) {
-	const query = `SELECT id, duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at
-	FROM scout_interactions WHERE scout_id = $1 AND created_at = $2`
+// func GetScoutInteractionByScoutId(db *sql.DB, scoutId int64, t time.Time) (*ScoutInteraction, error) {
+// 	const query = `SELECT id, duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at
+// 	FROM scout_interactions WHERE scout_id = $1 AND created_at = $2`
 
-	var result ScoutInteraction
-	var et time.Time
-	err := db.QueryRow(query, scoutId, t).Scan(&result.Id, &result.Duration, &result.Waypoints, &result.WaypointWidths, &result.WaypointTimes, &result.Processed, &et)
-	result.ScoutId = scoutId
-	result.EnteredAt = et.UTC()
-	result.CreatedAt = t
+// 	var result ScoutInteraction
+// 	var et time.Time
+// 	err := db.QueryRow(query, scoutId, t).Scan(&result.Id, &result.Duration, &result.Waypoints, &result.WaypointWidths, &result.WaypointTimes, &result.Processed, &et)
+// 	result.ScoutId = scoutId
+// 	result.EnteredAt = et.UTC()
+// 	result.CreatedAt = t
 
-	return &result, err
-}
+// 	return &result, err
+// }
 
 func GetLastScoutInteraction(db *sql.DB, scoutId int64) (*ScoutInteraction, error) {
-	const query = `SELECT id, duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at,
-	created_at FROM scout_interactions WHERE scout_id = $1 ORDER BY created_at DESC LIMIT 1`
+	const query = `SELECT id, duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at
+		FROM scout_interactions WHERE scout_id = $1 ORDER BY id DESC LIMIT 1`
 
 	var result ScoutInteraction
 	err := db.QueryRow(query, scoutId).Scan(&result.Id, &result.Duration, &result.Waypoints, &result.WaypointWidths,
-		&result.WaypointTimes, &result.Processed, &result.EnteredAt, &result.CreatedAt)
+		&result.WaypointTimes, &result.Processed, &result.EnteredAt)
 	result.ScoutId = scoutId
 
 	return &result, err
@@ -225,10 +221,9 @@ func GetUnprocessed(db *sql.DB) ([]*ScoutInteraction, error) {
 
 	for rows.Next() {
 		var si ScoutInteraction
-		var ct, et time.Time
+		var et time.Time
 		err = rows.Scan(&si.Id, &si.ScoutId, &si.Duration, &si.Waypoints, &si.WaypointWidths,
-			&si.WaypointTimes, &si.Processed, &et, &ct)
-		si.CreatedAt = ct.UTC()
+			&si.WaypointTimes, &si.Processed, &et)
 		si.EnteredAt = et.UTC()
 		if err != nil {
 			return result, err
@@ -255,10 +250,10 @@ func DeleteScoutInteractions(db *sql.DB, scoutId int64) error {
 
 func (si *ScoutInteraction) Insert(db *sql.DB) error {
 	const query = `INSERT INTO scout_interactions (scout_id, duration, waypoints,
-		waypoint_widths, waypoint_times, processed, entered_at, created_at) VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`
+		waypoint_widths, waypoint_times, processed, entered_at) VALUES
+		($1, $2, $3, $4, $5, $6, $7) RETURNING id`
 	return db.QueryRow(query, si.ScoutId, si.Duration, si.Waypoints, si.WaypointWidths,
-		si.WaypointTimes, si.Processed, si.EnteredAt, si.CreatedAt).Scan(&si.Id)
+		si.WaypointTimes, si.Processed, si.EnteredAt).Scan(&si.Id)
 }
 
 func ScoutInteractionsAsJSON(db *sql.DB) (string, error) {
@@ -277,7 +272,7 @@ func ScoutInteractionsAsJSON(db *sql.DB) (string, error) {
 	for rows.Next() {
 		var si ScoutInteraction
 		err = rows.Scan(&si.Id, &si.ScoutId, &si.Duration, &si.Waypoints, &si.WaypointWidths,
-			&si.WaypointTimes, &si.Processed, &si.CreatedAt, &si.EnteredAt)
+			&si.WaypointTimes, &si.Processed, &si.EnteredAt)
 		if err != nil {
 			return file, err
 		}

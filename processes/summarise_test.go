@@ -73,10 +73,9 @@ var _ = Describe("Summarise Process", func() {
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
-			t := time.Now().UTC()
-			et := t.Round(15 * time.Minute)
+			et := time.Now().UTC().Round(15 * time.Minute)
 			si := models.ScoutInteraction{-1, s.Id, 0.2, models.Path{[2]int{1, 2}},
-				models.Path{[2]int{3, 4}}, models.RealArray{0.1}, true, t, et}
+				models.Path{[2]int{3, 4}}, models.RealArray{0.1}, true, et}
 			err = si.Insert(db)
 			Ω(err).Should(BeNil())
 
@@ -92,15 +91,14 @@ var _ = Describe("Summarise Process", func() {
 			err := s.Insert(db)
 			Ω(err).Should(BeNil())
 
-			t := time.Now().UTC()
-			et := t.Round(15 * time.Minute)
+			et := time.Now().UTC().Round(15 * time.Minute)
 			si := &models.ScoutInteraction{-1, s.Id, 0.2, models.Path{[2]int{1, 2}},
-				models.Path{[2]int{3, 4}}, models.RealArray{0.1}, false, t, et}
+				models.Path{[2]int{3, 4}}, models.RealArray{0.1}, false, et}
 			err = si.Insert(db)
 			Ω(err).Should(BeNil())
 
 			si2 := &models.ScoutInteraction{-1, s.Id, 0.2, models.Path{[2]int{1, 2}},
-				models.Path{[2]int{3, 4}}, models.RealArray{0.1}, false, t, et}
+				models.Path{[2]int{3, 4}}, models.RealArray{0.1}, false, et}
 			err = si2.Insert(db)
 			Ω(err).Should(BeNil())
 
@@ -122,7 +120,7 @@ var _ = Describe("Summarise Process", func() {
 	Context("maxTravelTime", func() {
 		It("should return the max travel time for a bucket", func() {
 			wpA := models.Waypoint{0, 0, 10, 10, 0.0}
-			wpB := models.Waypoint{0, 102, 10, 10, 1.0}
+			wpB := models.Waypoint{0, 192, 10, 10, 1.0}
 			wpC := models.Waypoint{0, 25, 10, 10, 1.0}
 
 			Ω(maxTravelTime(wpA, wpB)).Should(Equal(float32(0.5)))
