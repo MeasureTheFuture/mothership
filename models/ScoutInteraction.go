@@ -261,9 +261,29 @@ func (si *ScoutInteraction) Insert(db *sql.DB) error {
 		si.WaypointTimes, si.Processed, si.EnteredAt, si.CreatedAt).Scan(&si.Id)
 }
 
-func ScoutInteractionsAsCSV(db *sql.DB) (string, error) {
-	file := configuration.GetDataDir() + "/scout_interactions.csv"
-	query := "COPY scout_interactions TO '" + file + "' DELIMITER ',' CSV HEADER"
-	_, err := db.Exec(query)
-	return file, err
+func ScoutInteractionsAsJSON(db *sql.DB) (string, error) {
+	file := configuration.GetDataDir() + "/scout_interactions.json"
+
+	const query = `SELECT * FROM scout_interactions`
+	rows, err := db.Query(query)
+	if err == sql.ErrNoRows {
+		return file, nil
+	} else if err != nil {
+		return file, err
+	}
+	defer rows.Close()
+
+	var result []ScoutInteraction
+	for rows.Next() {
+		var si ScoutInteraction
+		err = rows.Scan(&si.Id, &si.ScoutId, &si.Duration, &si.Waypoints, &si.WaypointWidths,
+			&si.WaypointTimes, &si.Processed, &si.CreatedAt, &si.EnteredAt)
+		if err != nil {
+			return file, err
+		}
+
+		result = append(result, si)
+	}
+
+	return file, configuration.SaveAsJSON(result, file)
 }

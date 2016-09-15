@@ -116,9 +116,28 @@ func (si *ScoutSummary) Update(db *sql.DB) error {
 	return err
 }
 
-func ScoutSummariesAsCSV(db *sql.DB) (string, error) {
-	file := configuration.GetDataDir() + "/scout_summaries.csv"
-	query := "COPY scout_summaries TO '" + file + "' DELIMITER ',' CSV HEADER"
-	_, err := db.Exec(query)
-	return file, err
+func ScoutSummariesAsJSON(db *sql.DB) (string, error) {
+	file := configuration.GetDataDir() + "/scout_summaries.json"
+
+	const query = `SELECT * FROM scout_summaries`
+	rows, err := db.Query(query)
+	if err == sql.ErrNoRows {
+		return file, nil
+	} else if err != nil {
+		return file, err
+	}
+	defer rows.Close()
+
+	var result []ScoutSummary
+	for rows.Next() {
+		var ss ScoutSummary
+		err = rows.Scan(&ss.ScoutId, &ss.VisitorCount, &ss.VisitTimeBuckets)
+		if err != nil {
+			return file, err
+		}
+
+		result = append(result, ss)
+	}
+
+	return file, configuration.SaveAsJSON(result, file)
 }

@@ -75,9 +75,27 @@ func (s *ScoutHealth) Insert(db *sql.DB) error {
 	return err
 }
 
-func ScoutHealthsAsCSV(db *sql.DB) (string, error) {
-	file := configuration.GetDataDir() + "/scout_healths.csv"
-	query := "COPY scout_healths TO '" + file + "' DELIMITER ',' CSV HEADER"
-	_, err := db.Exec(query)
-	return file, err
+func ScoutHealthsAsJSON(db *sql.DB) (string, error) {
+	file := configuration.GetDataDir() + "/scout_healths.json"
+	const query = `SELECT * FROM scout_healths`
+	rows, err := db.Query(query)
+	if err == sql.ErrNoRows {
+		return file, nil
+	} else if err != nil {
+		return file, err
+	}
+	defer rows.Close()
+
+	var result []ScoutHealth
+	for rows.Next() {
+		var sh ScoutHealth
+		err = rows.Scan(&sh.ScoutId, &sh.CPU, &sh.Memory, &sh.TotalMemory, &sh.Storage, &sh.CreatedAt)
+		if err != nil {
+			return file, err
+		}
+
+		result = append(result, sh)
+	}
+
+	return file, configuration.SaveAsJSON(result, file)
 }

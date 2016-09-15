@@ -36,25 +36,25 @@ import (
 func DownloadData(db *sql.DB, c echo.Context) error {
 	var files []string
 
-	sh, err := models.ScoutHealthsAsCSV(db)
+	sh, err := models.ScoutHealthsAsJSON(db)
 	if err != nil {
 		return err
 	}
 	files = append(files, sh)
 
-	si, err := models.ScoutInteractionsAsCSV(db)
+	si, err := models.ScoutInteractionsAsJSON(db)
 	if err != nil {
 		return err
 	}
 	files = append(files, si)
 
-	ss, err := models.ScoutSummariesAsCSV(db)
+	ss, err := models.ScoutSummariesAsJSON(db)
 	if err != nil {
 		return err
 	}
 	files = append(files, ss)
 
-	sa, err := models.ScoutsAsCSV(db)
+	sa, err := models.ScoutsAsJSON(db)
 	if err != nil {
 		return err
 	}

@@ -18,6 +18,7 @@
 package configuration
 
 import (
+	"bufio"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -45,6 +46,27 @@ func GetDataDir() string {
 	}
 
 	return dir
+}
+
+func SaveAsJSON(v interface{}, fileName string) error {
+	f, err := os.Create(fileName)
+	if os.IsNotExist(err) {
+		return err
+	}
+	defer f.Close()
+	w := bufio.NewWriter(f)
+
+	b, err := json.MarshalIndent(v, "", " ")
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(b)
+	if err != nil {
+		return err
+	}
+
+	return w.Flush()
 }
 
 func Parse(configFile string) (c Configuration, err error) {
