@@ -86,7 +86,7 @@ func main() {
 		return controllers.UpdateScout(db, c)
 	})
 
-	e.GET("/download", func(c echo.Context) error {
+	e.GET("/download.zip", func(c echo.Context) error {
 		return controllers.DownloadData(db, c)
 	})
 
