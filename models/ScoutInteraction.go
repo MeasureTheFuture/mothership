@@ -177,20 +177,6 @@ func GetScoutInteractionById(db *sql.DB, id int64) (*ScoutInteraction, error) {
 	return &result, err
 }
 
-// func GetScoutInteractionByScoutId(db *sql.DB, scoutId int64, t time.Time) (*ScoutInteraction, error) {
-// 	const query = `SELECT id, duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at
-// 	FROM scout_interactions WHERE scout_id = $1 AND created_at = $2`
-
-// 	var result ScoutInteraction
-// 	var et time.Time
-// 	err := db.QueryRow(query, scoutId, t).Scan(&result.Id, &result.Duration, &result.Waypoints, &result.WaypointWidths, &result.WaypointTimes, &result.Processed, &et)
-// 	result.ScoutId = scoutId
-// 	result.EnteredAt = et.UTC()
-// 	result.CreatedAt = t
-
-// 	return &result, err
-// }
-
 func GetLastScoutInteraction(db *sql.DB, scoutId int64) (*ScoutInteraction, error) {
 	const query = `SELECT id, duration, waypoints, waypoint_widths, waypoint_times, processed, entered_at
 		FROM scout_interactions WHERE scout_id = $1 ORDER BY id DESC LIMIT 1`
@@ -203,9 +189,10 @@ func GetLastScoutInteraction(db *sql.DB, scoutId int64) (*ScoutInteraction, erro
 	return &result, err
 }
 
-func MarkProcessed(db *sql.DB, id int64) error {
+func (si *ScoutInteraction) MarkProcessed(db *sql.DB) error {
 	const query = `UPDATE scout_interactions SET processed = true WHERE id = $1`
-	_, err := db.Exec(query, id)
+	_, err := db.Exec(query, si.Id)
+	si.Processed = true
 
 	return err
 }

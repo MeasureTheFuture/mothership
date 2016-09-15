@@ -92,7 +92,7 @@ var _ = Describe("Scout Interaction Model", func() {
 	})
 
 	Context("Unprocessed", func() {
-		PIt("Should be able to get unproccessed interactions", func() {
+		It("Should be able to get unproccessed interactions", func() {
 			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo",
 				"idle", &ScoutSummary{}}
 			err := s.Insert(db)
@@ -114,7 +114,28 @@ var _ = Describe("Scout Interaction Model", func() {
 			up, err := GetUnprocessed(db)
 			Ω(err).Should(BeNil())
 			Ω(up).Should(Equal([]*ScoutInteraction{&si1, &si2}))
+		})
+	})
 
+	Context("MarkProcessed", func() {
+		It("Should be able to mark interactions as processed", func() {
+			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo",
+				"idle", &ScoutSummary{}}
+			err := s.Insert(db)
+			Ω(err).Should(BeNil())
+
+			et := time.Now().UTC().Round(15 * time.Minute)
+			si1 := ScoutInteraction{-1, s.Id, 0.2, Path{[2]int{1, 2}}, Path{[2]int{3, 4}}, RealArray{0.1}, false, et}
+			err = si1.Insert(db)
+			Ω(err).Should(BeNil())
+
+			err = si1.MarkProcessed(db)
+			Ω(err).Should(BeNil())
+
+			Ω(si1.Processed).Should(BeTrue())
+			up, err := GetUnprocessed(db)
+			Ω(err).Should(BeNil())
+			Ω(up).Should(BeNil())
 		})
 	})
 })

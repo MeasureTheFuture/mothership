@@ -62,7 +62,7 @@ func updateUnprocessed(db *sql.DB) {
 			log.Print(err)
 		}
 
-		err = models.MarkProcessed(db, si.Id)
+		err = si.MarkProcessed(db)
 		if err != nil {
 			log.Printf("ERROR: Summarise unable to make scout interaction as processed")
 			log.Print(err)
