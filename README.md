@@ -109,13 +109,11 @@ Testing for the frontend:
 - [ ] Better identification that the UI is in measuring mode / working
 - [ ] Need to generate histogram / timeline.
 - [ ] Write tests for the frontend components
+- [ ] Tidy up responsive design (for small screensizes)
 - [ ] Need to calculate and store heatmap / statistics overtime.
 - [ ] Write tests for summarise and heatmap generation. summarise_test
 - [ ] Write tests for all the other cases when an AABB intersects a shaft (shaft_test)
 - [ ] An easier way to tweak the OpenCV settings for best results
-- [ ] Tidy up responsive design (for small screensizes)
-- [ ] ScoutHealth model: Prune/Delete. Reduce fidielity of data storage the older it becomes
-
 
 ## License
 
