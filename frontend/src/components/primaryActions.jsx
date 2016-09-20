@@ -17,7 +17,7 @@
 "use strict;"
 
 import React from 'react';
-import { UpdateActiveLocation, ActiveLocation } from '../reducers/index.js'
+import { UpdateActiveLocation, ActiveLocation } from '../reducers/index.js';
 
 var DeactivateAction = React.createClass({
   handleDeactivate: function() {
@@ -28,7 +28,7 @@ var DeactivateAction = React.createClass({
 
   render: function() {
     return (
-      <a href="#" className="warning" onClick={this.handleDeactivate}>[<i className="fa fa-power-off"></i> deactivate]</a>
+      <a id="deactivate" href="#" className="warning" onClick={this.handleDeactivate}>[<i className="fa fa-power-off"></i> deactivate]</a>
     )
   }
 });
@@ -44,7 +44,7 @@ var ActivateAction = React.createClass({
 
   render: function() {
     return (
-      <a href="#" onClick={this.handleActivate}>[<i className="fa fa-power-off"></i> activate]</a>
+      <a id="activate" href="#" onClick={this.handleActivate}>[<i className="fa fa-power-off"></i> activate]</a>
     );
   }
 });
@@ -60,7 +60,7 @@ var MeasureAction = React.createClass({
 
   render: function() {
     return (
-      <a href="#" onClick={this.handleMeasure}>[<i className="fa fa-line-chart"></i> measure]</a>
+      <a id="measure" href="#" onClick={this.handleMeasure}>[<i className="fa fa-line-chart"></i> measure]</a>
     );
   }
 });
@@ -79,7 +79,7 @@ var CalibrateAction = React.createClass({
     var label = ((ActiveLocation(store).state == 'idle') ? "calibrate" : "recalibrate");
 
     return (
-      <a href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> {label}]</a>
+      <a id="calibrate" href="#" onClick={this.handleCalibrate}>[<i className="fa fa-wrench"></i> {label}]</a>
     );
   }
 });
