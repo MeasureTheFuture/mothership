@@ -32,7 +32,6 @@ func Summarise(db *sql.DB, c configuration.Configuration) {
 	for {
 		select {
 		case <-poll:
-			log.Printf("INFO: Generating summary of interaction data.")
 			updateUnprocessed(db)
 		}
 	}

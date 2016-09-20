@@ -95,7 +95,7 @@ Contains an array of scout healths, one for each scout at about a 15 minute inte
  ```
 
 * **ScoutId** Is used to match the health with the source scout. The corresponding scout in scouts.json will have the same **Id**.
-* **CPU** The five minute load average for the scout at that point in time. In this particular example 5.09 means that on average 4.09 processes were waiting on the CPU.
+* **CPU** The five minute load average for the scout at that point in time. In this particular example 5.09 means that on average 4.09 processes were waiting on the CPU. A value of 0 would mean that the system was completely idle.
 * **Memory** The percentage of the TotalMemory currently being used on the scout system.
 * **TotalMemory** The total memory available on the scout in bytes.
 * **Storage** The percentage of the total available storage being used on the scout system.
