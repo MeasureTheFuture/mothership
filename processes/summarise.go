@@ -41,6 +41,7 @@ func updateUnprocessed(db *sql.DB) {
 	up, err := models.GetUnprocessed(db)
 	if err != nil {
 		log.Printf("ERROR: Summarise unable to get unprocessed scout interactions.")
+		log.Print(err)
 		return
 	}
 
