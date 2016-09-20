@@ -50,7 +50,7 @@ var _ = Describe("Scout Interaction Model", func() {
 	})
 
 	Context("Insert", func() {
-		PIt("Should be able to insert a scout interaction", func() {
+		It("Should be able to insert a scout interaction", func() {
 			s := Scout{-1, "800fd548-2d2b-4185-885d-6323ccbe88a0", "192.168.0.1", 8080, true, "foo",
 				"idle", &ScoutSummary{}}
 			err := s.Insert(db)
