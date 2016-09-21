@@ -37,11 +37,14 @@ var NavItem = React.createClass({
 
 var NavList = React.createClass({
   render: function() {
-    var navNodes = this.props.data.map(function(location, index) {
-      return (
-        <NavItem name={location.name} key={index} idx={index} />
-      )
-    });
+    var navNodes = ""
+    if (this.props.data.map.length > 1) {
+      navNodes = this.props.data.map(function(location, index) {
+        return (
+          <NavItem name={location.name} key={index} idx={index} />
+        )
+      });
+    }
 
     return (
       <ul className="navList">

@@ -87,6 +87,20 @@ CalibrateAction.contextTypes = {
   store: React.PropTypes.object
 };
 
+var EditAction = React.createClass({
+  render: function() {
+    var txt = (this.props.locationEdit ? "save" : "edit");
+    var icon = (this.props.locationEdit ? "fa fa-save" : "fa fa-pencil");
+
+    return (
+      <a href="#" onClick={this.props.editCallBack}>[<i className={icon}></i> {txt}]</a>
+    );
+  }
+});
+EditAction.contextTypes = {
+  store: React.PropTypes.object
+};
+
 var PrimaryActions = React.createClass({
   render: function() {
     const { store } = this.context;
@@ -95,7 +109,7 @@ var PrimaryActions = React.createClass({
     var measure = ((ActiveLocation(store).authorised && ActiveLocation(store).state == 'calibrated') ? <MeasureAction /> : "");
 
     return (
-      <div className="location-meta">{onOff} {calibrate} {measure}</div>
+      <p className="location-meta">{onOff} {calibrate} {measure}<EditAction locationEdit={this.props.locationEdit} editCallBack={this.props.editCallBack}/></p>
     );
   }
 });

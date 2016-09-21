@@ -28,7 +28,7 @@ var LocationEdit = React.createClass({
       <header className="locationLabel">
         <form className="pure-form">
           <h2 className="location-title"><input id="locationInput" className="location-title" type="text" placeholder={ActiveLocation(store).name} /></h2>
-          <p className="location-meta"><a href="#" onClick={this.props.callBack}>[<i className="fa fa-save"></i> save</a>]</p>
+          <PrimaryActions locationEdit={this.props.locationEdit} editCallBack={this.props.callBack}/>
         </form>
       </header>
     )
@@ -46,7 +46,7 @@ var LocationLabel = React.createClass({
     return (
       <header className="locationLabel">
           <h2 className="location-title">{ActiveLocation(store).name}</h2>
-          <p className="location-meta"><a href="#" onClick={this.props.callBack}>[<i className="fa fa-pencil"></i> edit</a>]</p>
+          <PrimaryActions locationEdit={this.props.locationEdit} editCallBack={this.props.callBack}/>
       </header>
     )
   }
@@ -221,17 +221,15 @@ Location = React.createClass({
 
   render: function() {
     const { store } = this.context;
-    var locationName = (this.state.locationEdit ? <LocationEdit callBack={this.saveCallBack} /> : <LocationLabel callBack={this.editCallBack} /> )
+    var locationName = (this.state.locationEdit ? <LocationEdit locationEdit={this.state.locationEdit} callBack={this.saveCallBack} /> : <LocationLabel locationEdit={this.state.locationEdit} callBack={this.editCallBack} /> )
     var heatmap = (ActiveLocation(store).state == 'measuring') ? <Heatmap /> : <Placeholder />
 
     return (
       <div className="location">
         <div id="locationName">{ locationName }</div>
-
         <div id="location-details">
           <h3>TOTAL INTERACTION TIME</h3>
           { heatmap }
-          <div className="location-meta"><PrimaryActions /></div>
         </div>
       </div>
     );
