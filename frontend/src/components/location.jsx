@@ -75,7 +75,10 @@ var Placeholder = React.createClass({
 
   render: function() {
     return (
+      <div id="placeholder">
+      <h3>&nbsp;</h3>
       <img className="pure-img placeholder" alt='test' src={this.getFrameURL()}/>
+      </div>
     )
   }
 });
@@ -187,6 +190,8 @@ var Heatmap = React.createClass({
     }
 
     return (
+      <div id="heatmap">
+      <h3>ACCUMULATED INTERACTION TIME</h3>
       <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox={viewBox}>
         <image x="0" y="0" width={w} height={h} xlinkHref={url}/>
         {data}{scale}
@@ -194,10 +199,35 @@ var Heatmap = React.createClass({
         <text x="957" y={h+65} textAnchor="middle" style={{fontSize:36,fontFamily:"Verdana, Geneva, sans-serif",fontWeight:"bold",letterSpacing:"-2px"}}>{this.secondsToStr(0.5*maxT)}</text>
         <text x="1918" y={h+65} textAnchor="end" style={{fontSize:36,fontFamily:"Verdana, Geneva, sans-serif",fontWeight:"bold",letterSpacing:"-2px"}}>{this.secondsToStr(maxT)}</text>
       </svg>
+      </div>
     )
   }
 });
 Heatmap.contextTypes = {
+  store: React.PropTypes.object
+}
+
+var Analysis = React.createClass({
+  render: function() {
+    const { store } = this.context;
+    var count = ActiveLocation(store).summary.VisitorCount;
+    var vUpper = Math.ceil((count + 1) / 10) * 10;
+    var vLower = vUpper - 10;
+
+    var report = <p>No detected interactions.</p>;
+    if (count > 0) {
+        report = <p>Around <b>{vLower}</b> to <b>{vUpper}</b> visitors have stayed for about <b>X</b> to <b>Y</b> minutes.</p>
+    }
+
+    return (
+      <div id="analysis">
+      <h3>INTERACTION REPORT</h3>
+      {report}
+      </div>
+    )
+  }
+})
+Analysis.contextTypes = {
   store: React.PropTypes.object
 }
 
@@ -206,13 +236,13 @@ Location = React.createClass({
     const { store } = this.context;
     var locationName = (store.getState().editLocation ? <LocationEdit /> : <LocationLabel /> )
     var heatmap = (ActiveLocation(store).state == 'measuring') ? <Heatmap /> : <Placeholder />
+    var report = (ActiveLocation(store).state == 'measuring') ? <Analysis /> : " "
 
     return (
       <div className="location">
         <div id="locationName">{ locationName }</div>
         <div id="location-details">
-          <h3>ACCUMULATED INTERACTION TIME</h3>
-          { heatmap }
+          { heatmap }{ report }
         </div>
       </div>
     );
