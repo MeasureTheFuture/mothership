@@ -18,7 +18,8 @@
 
 const initialState = {
   locations:[],
-  active:0
+  active:0,
+  editLocation:false
 }
 
 export function ActiveLocation(store) {
@@ -63,16 +64,31 @@ export function Mothership(state, action) {
 
   switch (action.type) {
     case 'UPDATE_LOCATIONS':
-      console.log("update");
       return {
         locations: action.locations,
-        active: state.active
+        active: state.active,
+        editLocation: state.editLocation
       }
 
     case 'SET_ACTIVE':
       return {
         locations: state.locations,
-        active: Math.min(state.locations.length - 1, Math.max(0, action.active))
+        active: Math.min(state.locations.length - 1, Math.max(0, action.active)),
+        editLocation: state.editLocation
+      }
+
+    case 'EDIT_LOCATION':
+      return {
+        locations: state.locations,
+        active: state.active,
+        editLocation: true
+      }
+
+    case 'SAVE_LOCATION':
+      return {
+        locations: state.locations,
+        active: state.active,
+        editLocation: false
       }
 
     default:

@@ -87,13 +87,32 @@ CalibrateAction.contextTypes = {
   store: React.PropTypes.object
 };
 
-var EditAction = React.createClass({
-  render: function() {
-    var txt = (this.props.locationEdit ? "save" : "edit");
-    var icon = (this.props.locationEdit ? "fa fa-save" : "fa fa-pencil");
+var SaveAction = React.createClass({
+  handleSave: function() {
+    const { store } = this.context;
+    UpdateActiveLocation(store, "name", document.getElementById('locationInput').value);
+    store.dispatch({ type:'SAVE_LOCATION' })
+  },
 
+  render: function() {
     return (
-      <a href="#" onClick={this.props.editCallBack}>[<i className={icon}></i> {txt}]</a>
+      <a href="#" onClick={this.handleSave}>[<i className="fa fa-save"></i> save]</a>
+    )
+  }
+});
+SaveAction.contextTypes = {
+  store: React.PropTypes.object
+};
+
+var EditAction = React.createClass({
+  handleEdit: function() {
+    const { store } = this.context;
+    store.dispatch({ type:'EDIT_LOCATION' });
+  },
+
+  render: function() {
+    return (
+      <a href="#" onClick={this.handleEdit}>[<i className="fa fa-pencil"></i> edit]</a>
     );
   }
 });
@@ -107,9 +126,10 @@ var PrimaryActions = React.createClass({
     var onOff = (ActiveLocation(store).authorised ? <DeactivateAction /> : <ActivateAction />);
     var calibrate = ((ActiveLocation(store).authorised && (ActiveLocation(store).state == 'idle' || ActiveLocation(store).state == 'calibrated')) ? <CalibrateAction /> : "");
     var measure = ((ActiveLocation(store).authorised && ActiveLocation(store).state == 'calibrated') ? <MeasureAction /> : "");
+    var edit = (store.getState().editLocation ? <SaveAction /> : <EditAction />);
 
     return (
-      <p className="location-meta">{onOff} {calibrate} {measure}<EditAction locationEdit={this.props.locationEdit} editCallBack={this.props.editCallBack}/></p>
+      <p className="location-meta">{onOff} {calibrate} {measure} {edit}</p>
     );
   }
 });

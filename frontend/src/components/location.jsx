@@ -28,7 +28,7 @@ var LocationEdit = React.createClass({
       <header className="locationLabel">
         <form className="pure-form">
           <h2 className="location-title"><input id="locationInput" className="location-title" type="text" placeholder={ActiveLocation(store).name} /></h2>
-          <PrimaryActions locationEdit={this.props.locationEdit} editCallBack={this.props.callBack}/>
+          <PrimaryActions />
         </form>
       </header>
     )
@@ -46,7 +46,7 @@ var LocationLabel = React.createClass({
     return (
       <header className="locationLabel">
           <h2 className="location-title">{ActiveLocation(store).name}</h2>
-          <PrimaryActions locationEdit={this.props.locationEdit} editCallBack={this.props.callBack}/>
+          <PrimaryActions />
       </header>
     )
   }
@@ -201,34 +201,17 @@ Heatmap.contextTypes = {
   store: React.PropTypes.object
 }
 
-
 Location = React.createClass({
-  getInitialState: function() {
-    return {locationEdit: false};
-  },
-
-  saveCallBack: function() {
-    const { store } = this.context;
-    UpdateActiveLocation(store, "name", document.getElementById('locationInput').value);
-    this.setState({locationEdit: false})
-    this.render();
-  },
-
-  editCallBack: function() {
-    this.setState({locationEdit: true});
-    this.render();
-  },
-
   render: function() {
     const { store } = this.context;
-    var locationName = (this.state.locationEdit ? <LocationEdit locationEdit={this.state.locationEdit} callBack={this.saveCallBack} /> : <LocationLabel locationEdit={this.state.locationEdit} callBack={this.editCallBack} /> )
+    var locationName = (store.getState().editLocation ? <LocationEdit /> : <LocationLabel /> )
     var heatmap = (ActiveLocation(store).state == 'measuring') ? <Heatmap /> : <Placeholder />
 
     return (
       <div className="location">
         <div id="locationName">{ locationName }</div>
         <div id="location-details">
-          <h3>TOTAL INTERACTION TIME</h3>
+          <h3>ACCUMULATED INTERACTION TIME</h3>
           { heatmap }
         </div>
       </div>
