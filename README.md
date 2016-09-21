@@ -105,7 +105,7 @@ Testing for the frontend:
 - [x] Heatmap rendering
 - [x] Heatmap number crunching
 - [x] Finish pending scout interaction tests
-- [ ] Need to render heatmap scale.
+- [x] Need to render heatmap scale.
 - [ ] Better identification that the UI is in measuring mode / working
 - [ ] Need to generate histogram / timeline.
 - [ ] Write tests for the frontend components

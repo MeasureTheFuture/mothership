@@ -66,6 +66,9 @@ img {
 .location {
     padding-bottom: 2em;
 }
+#location-details {
+    padding-top: 2em;
+}
 h2.location-title {
     font-size: 2em;
     color: #222;

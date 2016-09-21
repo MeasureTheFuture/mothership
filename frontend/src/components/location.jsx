@@ -94,14 +94,14 @@ var Heatmap = React.createClass({
 
   generateFill: function(t) {
     if (t < 0.001) {
-      return "rgba(0, 0, 0, 0)"
+       return "rgba(19, 27, 66, 0.1)"
     }
 
     if (t < 0.5) {
       return "rgba("+this.toI(this.lerp(19, 250, t))+","
         +this.toI(this.lerp(27, 212, t))+","
         +this.toI(this.lerp(66, 12, t))+","
-        +this.lerp(0.4, 0.5, t)+")"
+        +this.lerp(0.3, 0.5, t)+")"
     }
 
     return "rgba("+this.toI(this.lerp(250, 186, t))+","
@@ -119,7 +119,41 @@ var Heatmap = React.createClass({
       })
     })
 
-    return maxT
+    if (maxT < 0.1) {
+      return 10.0;
+    }
+
+    return maxT;
+  },
+
+  pluralize :function(n) {
+        return (n > 1) ? 's' : '';
+  },
+
+  secondsToStr: function(s) {
+    s = Math.floor(s);
+    var years = Math.floor(s / 31536000);
+    if (years) {
+        return years + ' yr' + this.pluralize(years);
+    }
+
+    var days = Math.floor((s %= 31536000) / 86400);
+    if (days) {
+        return days + ' day' + this.pluralize(days);
+    }
+    var hours = Math.floor((s %= 86400) / 3600);
+    if (hours) {
+        return hours + ' hr' + this.pluralize(hours);
+    }
+    var minutes = Math.floor((s %= 3600) / 60);
+    if (minutes) {
+        return minutes + ' min' + this.pluralize(minutes);
+    }
+    var seconds = s % 60;
+    if (seconds) {
+        return seconds + ' sec' + this.pluralize(seconds);
+    }
+    return '0 sec';
   },
 
   render: function() {
@@ -133,7 +167,7 @@ var Heatmap = React.createClass({
     var bucketW = w/iBuckets;
     var bucketH = h/jBuckets;
     var maxT = this.maxTime(buckets);
-    var viewBox="0 0 " + w + " " + h;
+    var viewBox="0 0 " + w + " " + 1165;
 
     var data = []
     for (var i = 0; i < iBuckets; i++) {
@@ -144,14 +178,21 @@ var Heatmap = React.createClass({
         }
 
         data.push(<rect key={i*iBuckets+j} x={i*bucketW} y={j*bucketH} width={bucketW} height={bucketH} style={{fill:this.generateFill(t)}} />);
-        //data.push(<text x={(i*bucketW) + (bucketW / 2)} y={(j*bucketH) + (bucketH / 2)} fontFamily="Verdana" fontSize="20">{t.toFixed(3)}</text>)
       }
+    }
+
+    var scale = [];
+    for (var i = 0; i < iBuckets; i++) {
+      scale.push(<rect key={'s'+(i*iBuckets)} x={i*bucketW} y='1080' width={bucketW} height='30' style={{fill:this.generateFill((i*bucketW)/w)}} />);
     }
 
     return (
       <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox={viewBox}>
         <image x="0" y="0" width={w} height={h} xlinkHref={url}/>
-        {data}
+        {data}{scale}
+        <text x="2" y={h+65} style={{fontSize:36,fontFamily:"Verdana, Geneva, sans-serif",fontWeight:"bold",letterSpacing:"-2px"}}>{this.secondsToStr(0.0)}</text>
+        <text x="957" y={h+65} textAnchor="middle" style={{fontSize:36,fontFamily:"Verdana, Geneva, sans-serif",fontWeight:"bold",letterSpacing:"-2px"}}>{this.secondsToStr(0.5*maxT)}</text>
+        <text x="1918" y={h+65} textAnchor="end" style={{fontSize:36,fontFamily:"Verdana, Geneva, sans-serif",fontWeight:"bold",letterSpacing:"-2px"}}>{this.secondsToStr(maxT)}</text>
       </svg>
     )
   }
@@ -188,7 +229,7 @@ Location = React.createClass({
         <div id="locationName">{ locationName }</div>
 
         <div id="location-details">
-          <h3>{ ActiveLocation(store).summary.VisitorCount } VISITORS</h3>
+          <h3>TOTAL INTERACTION TIME</h3>
           { heatmap }
           <div className="location-meta"><PrimaryActions /></div>
         </div>
