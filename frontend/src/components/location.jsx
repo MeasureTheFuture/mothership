@@ -214,9 +214,11 @@ var Analysis = React.createClass({
     var vUpper = Math.ceil((count + 1) / 10) * 10;
     var vLower = vUpper - 10;
 
+
     var report = <p>No detected interactions.</p>;
     if (count > 0) {
-        report = <p>Around <b>{vLower}</b> to <b>{vUpper}</b> visitors have stayed for about <b>X</b> to <b>Y</b> minutes.</p>
+        // have stayed for about <b>X</b> to <b>Y</b> minutes.</p>
+        report = <p>Around <b>{vLower}</b> to <b>{vUpper}</b> visitors.</p>
     }
 
     return (
