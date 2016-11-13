@@ -31,12 +31,7 @@ import (
 )
 
 func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
-	// No authorization signature.
-	if !c.Request().Header().Contains("Mothership-Authorization") {
-		return nil, nil
-	}
-
-	uuid := c.Request().Header().Get("Mothership-Authorization")
+	uuid := c.Request().Header.Get("Mothership-Authorization")
 	s, err := models.GetScoutByUUID(db, uuid)
 
 	if err != nil {

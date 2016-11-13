@@ -22,12 +22,12 @@ const initialState = {
   editLocation:false
 }
 
-export function ActiveLocation(store) {
+function ActiveLocation(store) {
   var state = store.getState();
   return state.locations[state.active];
 }
 
-export function GetLocations(store) {
+function GetLocations(store) {
     var httpreq = new XMLHttpRequest();
     httpreq.open("GET", "http://"+window.location.host+"/scouts", true);
     httpreq.send(null);
@@ -39,7 +39,7 @@ export function GetLocations(store) {
     }
 }
 
-export function UpdateActiveLocation(store, field, value) {
+function UpdateActiveLocation(store, field, value) {
   var state = store.getState();
 
   var l = Object.assign({}, state.locations[state.active]);
@@ -57,7 +57,7 @@ export function UpdateActiveLocation(store, field, value) {
   }
 }
 
-export function Mothership(state, action) {
+function Mothership(state, action) {
   if (state === undefined) {
     return initialState;
   }

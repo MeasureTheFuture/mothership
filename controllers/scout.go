@@ -148,7 +148,7 @@ func UpdateScout(db *sql.DB, c echo.Context) error {
 		return err
 	}
 
-	body, err := ioutil.ReadAll(c.Request().Body())
+	body, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		return err
 	}

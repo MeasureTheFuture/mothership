@@ -24,7 +24,6 @@ import (
 	"github.com/MeasureTheFuture/mothership/controllers"
 	"github.com/MeasureTheFuture/mothership/processes"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/engine/fasthttp"
 	_ "github.com/lib/pq"
 	"log"
 	"os"
@@ -104,5 +103,8 @@ func main() {
 		return controllers.ScoutHeartbeat(db, c)
 	})
 
-	e.Run(fasthttp.New(config.Address))
+	if err := e.Start(config.Address); err != nil {
+		e.Logger.Fatal(err)
+	}
+	e.Start()
 }
