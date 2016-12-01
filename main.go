@@ -106,5 +106,4 @@ func main() {
 	if err := e.Start(config.Address); err != nil {
 		e.Logger.Fatal(err)
 	}
-	e.Start()
 }
