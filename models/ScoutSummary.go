@@ -27,8 +27,8 @@ import (
 	"strings"
 )
 
-type Buckets [20][20]float32
-type IntBuckets [20][20]int
+type Buckets [configuration.HBuckets][configuration.WBuckets]float32
+type IntBuckets [configuration.HBuckets][configuration.WBuckets]int
 
 type ScoutSummary struct {
 	ScoutId          int64
