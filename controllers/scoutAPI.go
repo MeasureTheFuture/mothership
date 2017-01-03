@@ -24,6 +24,7 @@ import (
 	"errors"
 	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
+	"github.com/lib/pq"
 	"net/http"
 	"strconv"
 	"strings"
@@ -43,6 +44,12 @@ func isScoutAuthorised(db *sql.DB, c echo.Context) (*models.Scout, error) {
 		// Scout doesn't exist, create it and mark it as un-authorized.
 		ns := models.Scout{-1, uuid, "0.0.0.0", 8080, false, "Location " + strconv.FormatInt(c+1, 10), "idle", &models.ScoutSummary{}}
 		err = ns.Insert(db)
+
+		// If the supplied UUID has an invalid syntax, return unauthorised.
+		if err, ok := err.(*pq.Error); ok && err.Code == "22P02" {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 

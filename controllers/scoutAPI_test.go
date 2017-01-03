@@ -21,7 +21,6 @@ import (
 	"bytes"
 	"github.com/MeasureTheFuture/mothership/models"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/engine/standard"
 	_ "github.com/lib/pq"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -111,7 +110,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req, err := http.NewRequest(echo.POST, "/scout_api/calibrated", strings.NewReader(heartbeatJSON))
 			Ω(err).Should(BeNil())
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutCalibrated(db, c)
 			Ω(err).Should(BeNil())
@@ -149,7 +148,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req.Header.Set("Content-Type", w.FormDataContentType())
 			w.Close()
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutCalibrated(db, c)
 			Ω(err).Should(BeNil())
@@ -174,7 +173,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req, err := http.NewRequest(echo.POST, "/scout_api/interaction", strings.NewReader(interactionJSON))
 			Ω(err).Should(BeNil())
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutInteraction(db, c)
 			Ω(err).Should(BeNil())
@@ -190,7 +189,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req, err := buildPostRequest("interaction.json", "/scout_api/interaction", "59ef7180-f6b2-4129-99bf-970eb4312b4b", interactionJSON)
 			Ω(err).Should(BeNil())
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutInteraction(db, c)
 			Ω(err).Should(BeNil())
@@ -209,7 +208,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			Ω(err).Should(BeNil())
 
 			rec = httptest.NewRecorder()
-			c = e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c = e.NewContext(req, rec)
 			err = ScoutInteraction(db, c)
 			Ω(err).Should(BeNil())
 			Ω(rec.Code).Should(Equal(http.StatusOK))
@@ -236,7 +235,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req, err := http.NewRequest(echo.POST, "/scout_api/heartbeat", strings.NewReader(heartbeatJSON))
 			Ω(err).Should(BeNil())
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutHeartbeat(db, c)
 			Ω(err).Should(BeNil())
@@ -252,7 +251,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req, err := buildPostRequest("scout.log", "/scout_api/heartbeat", "59ef7180-f6b2-4129-99bf-970eb4312b4b", heartbeatJSON)
 			Ω(err).Should(BeNil())
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutHeartbeat(db, c)
 			Ω(err).Should(BeNil())
@@ -281,7 +280,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			Ω(err).Should(BeNil())
 
 			rec = httptest.NewRecorder()
-			c = e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c = e.NewContext(req, rec)
 			err = ScoutHeartbeat(db, c)
 			Ω(err).Should(BeNil())
 			Ω(rec.Code).Should(Equal(http.StatusOK))
@@ -307,7 +306,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req, err := http.NewRequest(echo.POST, "/scout_api/log", strings.NewReader(heartbeatJSON))
 			Ω(err).Should(BeNil())
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutLog(db, c)
 			Ω(err).Should(BeNil())
@@ -323,7 +322,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			req, err := buildPostRequest("scout.log", "/scout_api/log", "59ef7180-f6b2-4129-99bf-970eb4312b4b", "log contents")
 			Ω(err).Should(BeNil())
 			rec := httptest.NewRecorder()
-			c := e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c := e.NewContext(req, rec)
 
 			err = ScoutLog(db, c)
 			Ω(err).Should(BeNil())
@@ -352,7 +351,7 @@ var _ = Describe("ScoutAPI controller", func() {
 			Ω(err).Should(BeNil())
 
 			rec = httptest.NewRecorder()
-			c = e.NewContext(standard.NewRequest(req, e.Logger()), standard.NewResponse(rec, e.Logger()))
+			c = e.NewContext(req, rec)
 			err = ScoutLog(db, c)
 			Ω(err).Should(BeNil())
 			Ω(rec.Code).Should(Equal(http.StatusOK))
