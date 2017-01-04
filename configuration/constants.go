@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- package configuration
+package configuration
 
 const (
-	FrameW   = 1920	// The width of the frames captured by the Webcam in pixels.
-	FrameH   = 1080 // The height of the frames captured by the webcam in pixels.
-	WBuckets = 20	// The number of horizontal buckets a frame is broken into.
-	HBuckets = 20   // The number of vertical buckets a frame is broken into.
+	FrameW   = 1920              // The width of the frames captured by the Webcam in pixels.
+	FrameH   = 1080              // The height of the frames captured by the webcam in pixels.
+	WBuckets = 20                // The number of horizontal buckets a frame is broken into.
+	HBuckets = 20                // The number of vertical buckets a frame is broken into.
 	BucketW  = FrameW / WBuckets // The width of a bucket in pixels.
 	BucketH  = FrameH / HBuckets // The height of a bucket in pixels
 )
